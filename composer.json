@@ -1,0 +1,33 @@
+{
+    "name": "uupt/filesystem",
+    "alias": "文件系统",
+    "description": "支持 本地 OSS COS 七牛云，文件上传、线上预览、程序调用、等功能。",
+    "type": "library",
+    "version": "1.0.0",
+    "keywords": ["owl-admin", "extension"],
+    "homepage": "https://github.com/uupt/filesystem",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "your name",
+            "email": "your email"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "slowlyo/owl-admin": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Uupt\\FileSystem\\": "src/"
+        }
+    },
+    "extra": {
+        "owl-admin": "Uupt\\FileSystem\\FilesystemServiceProvider",
+        "laravel": {
+            "providers": [
+                "Uupt\\FileSystem\\FilesystemServiceProvider"
+            ]
+        }
+    }
+}
