@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Slowlyo\OwlAdmin\Admin;
 use Slowlyo\OwlAdmin\Controllers\AdminController;
+use Uupt\FileSystem\Models\FilesystemConfig;
 
 /**
  * 上传文件工具类
@@ -28,11 +29,11 @@ class UploadController extends AdminController
     public function uploadRich(): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
     {
         $fromWangEditor = false;
-        $file           = request()->file('file');
+        $file = request()->file('file');
 
         if (!$file) {
             $fromWangEditor = true;
-            $file           = request()->file('wangeditor-uploaded-image');
+            $file = request()->file('wangeditor-uploaded-image');
             if (!$file) {
                 $file = request()->file('wangeditor-uploaded-video');
             }
@@ -59,23 +60,40 @@ class UploadController extends AdminController
      */
     protected function upload($type = 'file'): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
     {
+        $basePath = '/';
+        $disk = request()->route('disk', 'local');
+        $diskConfig = FilesystemConfig::query()->where('key',$disk)->first();
         $file = request()->file('file');
 
         if (!$file) {
             return $this->response()->fail(__('admin.upload_file_error'));
         }
-        $filesystem = Storage::createLocalDriver([
-            'driver' => 'local',
-            'root' => base_path('public'),
-            'throw' => false,
-        ]);
-        do{
-            $fileName = Admin::config('admin.upload.directory.' . $type).'/'.Str::random(50).".{$file->getClientOriginalExtension()}";
+        if(is_string($diskConfig->getAttribute('config'))){
+            $diskConfigBody = json_decode($diskConfig->getAttribute('config'),true);
+        }
+        // 本地路径处理
+        if($diskConfig->getAttribute('driver') === 'local'){
+            $diskConfigBody['base_path'] = base_path($diskConfigBody['base_path']);
+            $basePath = str_replace(base_path(),'',$diskConfigBody['base_path']).'/';
+            $diskConfigBody['throw'] = boolval($diskConfigBody['throw']);
+        }
+        // OSS 参数修正
+        if($diskConfig->getAttribute('driver') === 'oss'){
+            $diskConfigBody['root'] = strval($diskConfigBody['root']);
+            if(!$diskConfigBody['isCName']){
+                $basePath = "https://{$diskConfigBody['bucket']}.{$diskConfigBody['endpoint']}/";
+            }else{
+                $basePath = "{$diskConfigBody['endpoint']}/";
+            }
+        }
+        $filesystem = Storage::build($diskConfigBody);
+        do {
+            $fileName = Admin::config('admin.upload.directory.' . $type) . '/' . Str::random(50) . ".{$file->getClientOriginalExtension()}";
 
-        }while($filesystem->exists($fileName));
+        } while ($filesystem->exists($fileName));
 
-        $filesystem->move($file->getRealPath(),$fileName);
+        $filesystem->put($fileName, file_get_contents($file->getRealPath()));
 
-        return $this->response()->success(['value' => $fileName]);
+        return $this->response()->success(['value' => $basePath.$fileName]);
     }
 }
