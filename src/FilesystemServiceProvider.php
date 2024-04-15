@@ -6,6 +6,7 @@ use Slowlyo\OwlAdmin\Extend\Extension;
 use Slowlyo\OwlAdmin\Renderers\TextControl;
 use Slowlyo\OwlAdmin\Extend\ServiceProvider;
 use Slowlyo\OwlDict\Models\AdminDict as AdminDictModel;
+use Uupt\FileSystem\Models\FilesystemConfig;
 
 class FilesystemServiceProvider extends ServiceProvider
 {
@@ -13,6 +14,21 @@ class FilesystemServiceProvider extends ServiceProvider
     {
         parent::install();
         $this->installDict();
+        if(!FilesystemConfig::query()->where('key','local')->first()){
+            FilesystemConfig::query()->insert([
+                'name'=>'默认存储',
+                'desc'=>'系统默认本地存储',
+                'key'=>'local',
+                'driver'=>'local',
+                'config'=>json_encode([
+                    'driver'=>'local',
+                    'root'=>'uploads',
+                    'throw'=>false
+                ]),
+                'created_at'=>date('Y-m-d H:i:s'),
+                'updated_at'=>date('Y-m-d H:i:s'),
+            ]);
+        }
     }
     protected function installDict()
     {
