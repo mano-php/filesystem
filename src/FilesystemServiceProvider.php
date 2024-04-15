@@ -10,6 +10,15 @@ use Uupt\FileSystem\Models\FilesystemConfig;
 
 class FilesystemServiceProvider extends ServiceProvider
 {
+    protected $menu = [
+        [
+            'parent'    => '系统管理',
+            'title'     => '文件系统',
+            'url'       => '/filesystem_config',
+            'url_type'  => '1',
+            'icon'      => 'ant-design:file-zip-outlined',
+        ]
+    ];
     public function install()
     {
         parent::install();
