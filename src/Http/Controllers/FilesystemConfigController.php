@@ -27,15 +27,35 @@ class FilesystemConfigController extends AdminController
             ->columns([
                 amis()->TableColumn('id', 'ID')->sortable(),
 				amis()->TableColumn('name', '名称'),
-				amis()->TableColumn('key', '引用标识'),
-				amis()->TableColumn('driver', '驱动'),
                 amis()->TableColumn('desc', '描述'),
+				amis()->TableColumn('key', '引用标识'),
+				amis()->SelectControl('driver', '驱动')->options(admin_dict()->getOptions('uupt.filesystem.driver'))->static(),
 				amis()->TableColumn('created_at', __('admin.created_at'))->set('type', 'datetime')->sortable(),
 				amis()->TableColumn('updated_at', __('admin.updated_at'))->set('type', 'datetime')->sortable(),
                 $this->rowActions(true)
             ]);
 
         return $this->baseList($crud);
+    }
+    /**
+     * 操作列
+     *
+     * @param bool   $dialog
+     * @param string $dialogSize
+     *
+     * @return \Slowlyo\OwlAdmin\Renderers\Operation
+     */
+    protected function rowActions(bool|array $dialog = false, string $dialogSize = '')
+    {
+        if (is_array($dialog)) {
+            return amis()->Operation()->label(__('admin.actions'))->buttons($dialog);
+        }
+
+        return amis()->Operation()->label(__('admin.actions'))->buttons([
+//            $this->rowShowButton($dialog, $dialogSize),
+            $this->rowEditButton($dialog, $dialogSize),
+            $this->rowDeleteButton(),
+        ]);
     }
 
     public function form($isEdit = false): Form
