@@ -77,7 +77,7 @@ class FilesystemServiceProvider extends ServiceProvider
     }
     public function boot()
     {
-        require_once(__DIR__.DIRECTORY_SEPARATOR.'functions.php');
+        require_once(__DIR__ . DIRECTORY_SEPARATOR . 'functions.php');
         if (Extension::tableExists()) {
             $this->autoRegister();
             $this->init();

@@ -47,7 +47,6 @@ class FilesystemConfigController extends AdminController
 			amis()->SelectControl('driver', '驱动')->options(admin_dict()->getOptions('uupt.filesystem.driver'))->value('local')->required(),
             // OSS 阿里云对象存储
             amis()->Container()->hiddenOn('${driver!="oss"}')->body([
-                amis()->HiddenControl('config.driver', 'driver')->value('oss')->required(),
                 amis()->TextControl('config.root', '前缀')->remark('根目录的话 直接为空，如果有开头不用以 / 开头'),
                 amis()->TextControl('config.access_key', 'ACCESS_KEY')->required(),
                 amis()->TextControl('config.secret_key', 'SECRET_KEY')->required(),
@@ -57,7 +56,6 @@ class FilesystemConfigController extends AdminController
             ]),
             // COS 腾讯云对象存储
             amis()->Container()->hiddenOn('${driver!="cos"}')->body([
-                amis()->HiddenControl('config.driver', 'driver')->value('cos')->required(),
                 amis()->TextControl('config.app_id', 'app_id')->required(),
                 amis()->TextControl('config.secret_id', 'secret_id')->required(),
                 amis()->TextControl('config.secret_key', 'secret_key')->required(),
@@ -66,12 +64,11 @@ class FilesystemConfigController extends AdminController
                 amis()->TextControl('config.prefix', '全局路径前缀')->remark('根目录的话 直接为空，如果有开头不用以 / 开头'),
                 amis()->TextControl('config.domain', '自定义域名')->remark('可选'),
                 amis()->TextControl('config.cdn', 'CND域名')->remark('可选，使用 CDN 域名时指定生成的 URL host'),
+                amis()->SwitchControl('config.use_https', '是否启用SSL')->remark('可选，是否使用 https，默认 开启')->trueValue(true)->falseValue(false)->value(true)->required(),
                 amis()->SwitchControl('config.signed_url', 'signed_url')->remark('可选，如果 bucket 为私有访问请打开此项')->trueValue(true)->falseValue(false)->value(false)->required(),
-                amis()->SwitchControl('config.use_https', '是否启用SSL')->remark('可选，是否使用 https，默认 关闭')->trueValue(true)->falseValue(false)->value(false)->required(),
             ]),
             // 本地
             amis()->Container()->hiddenOn('${driver!="local"}')->body([
-                amis()->HiddenControl('config.driver', 'driver')->value('local')->required(),
                 amis()->TextControl('config.root', '基础路径')->remark('基于base_path() 函数的参数 、可直接 写 例如:upload')->required(),
                 amis()->SwitchControl('config.throw', '是否抛出异常')->trueValue(true)->falseValue(false)->value(false)->required(),
             ]),

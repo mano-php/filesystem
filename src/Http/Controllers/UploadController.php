@@ -62,28 +62,38 @@ class UploadController extends AdminController
     {
         $basePath = '/';
         $disk = request()->route('disk', 'local');
-        $diskConfig = FilesystemConfig::query()->where('key',$disk)->first();
+        $diskConfig = FilesystemConfig::query()->where('key', $disk)->first();
         $file = request()->file('file');
 
         if (!$file) {
             return $this->response()->fail(__('admin.upload_file_error'));
         }
-        if(is_string($diskConfig->getAttribute('config'))){
-            $diskConfigBody = json_decode($diskConfig->getAttribute('config'),true);
+        if (is_string($diskConfig->getAttribute('config'))) {
+            $diskConfigBody = json_decode($diskConfig->getAttribute('config'), true);
         }
+        $diskConfigBody['driver'] = $diskConfig->getAttribute('driver');
         // 本地路径处理
-        if($diskConfig->getAttribute('driver') === 'local'){
+        if ($diskConfig->getAttribute('driver') === 'local') {
             $diskConfigBody['base_path'] = base_path($diskConfigBody['base_path']);
-            $basePath = str_replace(base_path(),'',$diskConfigBody['base_path']).'/';
+            $basePath = str_replace(base_path(), '', $diskConfigBody['base_path']) . '/';
             $diskConfigBody['throw'] = boolval($diskConfigBody['throw']);
         }
         // OSS 参数修正
-        if($diskConfig->getAttribute('driver') === 'oss'){
+        if ($diskConfig->getAttribute('driver') === 'oss') {
             $diskConfigBody['root'] = strval($diskConfigBody['root']);
-            if(!$diskConfigBody['isCName']){
+            if (!$diskConfigBody['isCName']) {
                 $basePath = "https://{$diskConfigBody['bucket']}.{$diskConfigBody['endpoint']}/";
-            }else{
+            } else {
                 $basePath = "{$diskConfigBody['endpoint']}/";
+            }
+        }
+        if ($diskConfig->getAttribute('driver') === 'cos') {
+            if (!(isset($diskConfigBody['domain']) && strval($diskConfigBody['domain']) >= 1)) {
+                $diskConfigBody['domain'] = "{$diskConfigBody['bucket']}.cos.{$diskConfigBody['region']}.myqcloud.com";
+            }
+            $basePath = "https://{$diskConfigBody['domain']}/";
+            if (!(isset($diskConfigBody['prefix']) && strval($diskConfigBody['prefix']) >= 1)) {
+                $diskConfigBody['prefix'] = '/';
             }
         }
         $filesystem = Storage::build($diskConfigBody);
@@ -94,6 +104,6 @@ class UploadController extends AdminController
 
         $filesystem->put($fileName, file_get_contents($file->getRealPath()));
 
-        return $this->response()->success(['value' => $basePath.$fileName]);
+        return $this->response()->success(['value' => $basePath . $fileName]);
     }
 }
