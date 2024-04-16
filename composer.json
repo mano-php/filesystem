@@ -16,7 +16,8 @@
     "require": {
         "php": ">=8.0",
         "slowlyo/owl-admin": "*",
-        "iidestiny/laravel-filesystem-oss": "3.3"
+        "iidestiny/laravel-filesystem-oss": "3.3",
+        "overtrue/laravel-filesystem-cos": "3.5.0",
     },
     "autoload": {
         "psr-4": {
