@@ -96,6 +96,10 @@ class UploadController extends AdminController
                 $diskConfigBody['prefix'] = '/';
             }
         }
+        if($diskConfig->getAttribute('driver') === 'kodo'){
+            $basePath = "https://{$diskConfigBody['domains']['https']}/";
+            $diskConfigBody['driver'] = 'qiniu';
+        }
         $filesystem = Storage::build($diskConfigBody);
         do {
             $fileName = Admin::config('admin.upload.directory.' . $type) . '/' . Str::random(50) . ".{$file->getClientOriginalExtension()}";

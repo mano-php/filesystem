@@ -45,6 +45,15 @@ class FilesystemConfigController extends AdminController
 			amis()->TextareaControl('desc', '描述')->required(),
 			amis()->TextControl('key', '引用标识')->remark('建议用字母命名并且 以 . 作为分隔')->maxLength(50)->required(),
 			amis()->SelectControl('driver', '驱动')->options(admin_dict()->getOptions('uupt.filesystem.driver'))->value('local')->required(),
+            // 七牛云存储
+            amis()->Container()->hiddenOn('${driver!="kodo"}')->body([
+                amis()->TextControl('config.domains.default', '七牛域名')->required()->remark('你的七牛域名'),
+                amis()->TextControl('config.domains.https', 'HTTPS域名')->required()->remark('可以使用你的七牛域名'),
+                amis()->TextControl('config.domains.custom', '自定义域名')->required()->remark('可以使用你的七牛域名'),
+                amis()->TextControl('config.access_key', 'ACCESS_KEY')->required(),
+                amis()->TextControl('config.secret_key', 'SECRET_KEY')->required(),
+                amis()->TextControl('config.bucket', 'BUCKET')->required(),
+            ]),
             // OSS 阿里云对象存储
             amis()->Container()->hiddenOn('${driver!="oss"}')->body([
                 amis()->TextControl('config.root', '前缀')->remark('根目录的话 直接为空，如果有开头不用以 / 开头'),

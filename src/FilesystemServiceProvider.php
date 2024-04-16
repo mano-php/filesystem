@@ -44,7 +44,7 @@ class FilesystemServiceProvider extends ServiceProvider
         $dicts = [
             [
                 'key' => 'uupt.filesystem.driver',
-                'value' => '采购状态',
+                'value' => '文件系统驱动',
                 'keys' => [
                     ['key' => 'local', 'value' => '本地存储'],
                     ['key' => 'kodo', 'value' => '七牛云kodo'],
