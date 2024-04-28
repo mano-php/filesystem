@@ -74,6 +74,8 @@ class FilesystemServiceProvider extends ServiceProvider
                 }
             }
         }
+	\Illuminate\Support\Facades\Cache::forget('admin_dict_cache_key');
+        \Illuminate\Support\Facades\Cache::forget('admin_dict_valid_cache_key');
     }
     public function boot()
     {
