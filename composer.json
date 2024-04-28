@@ -16,6 +16,7 @@
     "require": {
         "php": ">=8.0",
         "slowlyo/owl-admin": "*",
+        "slowlyo/owl-dict": "*",
         "iidestiny/laravel-filesystem-oss": "3.3",
         "overtrue/laravel-filesystem-cos": "3.5.0",
         "zgldh/qiniu-laravel-storage": "^9.0"
