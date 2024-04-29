@@ -63,6 +63,7 @@ class FilesystemConfigController extends AdminController
     public function form($isEdit = false): Form
     {
         return $this->baseForm()->body([
+            amis()->HiddenControl('id','ID'),
             amis()->TextControl('name', '名称')->disabled()->required(),
             amis()->TextareaControl('desc', '描述')->disabled()->required(),
             amis()->HiddenControl('key', '引用标识')->remark('建议用字母命名并且 以 . 作为分隔')->maxLength(50)->required(),

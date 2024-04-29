@@ -74,8 +74,8 @@ class UploadController extends AdminController
         $diskConfigBody['driver'] = $diskConfig->getAttribute('driver');
         // 本地路径处理
         if ($diskConfig->getAttribute('driver') === 'local') {
-            $diskConfigBody['base_path'] = base_path($diskConfigBody['base_path']);
-            $basePath = str_replace(base_path(), '', $diskConfigBody['base_path']) . '/';
+            $diskConfigBody['base_path'] = base_path($diskConfigBody['root']);
+            $basePath = str_replace(base_path(), '', $diskConfigBody['root']) . '/';
             $diskConfigBody['throw'] = boolval($diskConfigBody['throw']);
         }
         // OSS 参数修正
