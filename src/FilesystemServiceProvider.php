@@ -2,6 +2,7 @@
 
 namespace Uupt\FileSystem;
 
+use Illuminate\Support\Facades\Cache;
 use Slowlyo\OwlAdmin\Extend\Extension;
 use Slowlyo\OwlAdmin\Renderers\TextControl;
 use Slowlyo\OwlAdmin\Extend\ServiceProvider;
@@ -113,6 +114,8 @@ class FilesystemServiceProvider extends ServiceProvider
                 }
             }
         }
+        Cache::forget('admin_dict_cache_key');
+        Cache::forget('admin_dict_valid_cache_key');
     }
     public function boot()
     {
