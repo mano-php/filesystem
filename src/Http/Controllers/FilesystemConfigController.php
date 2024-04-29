@@ -69,6 +69,7 @@ class FilesystemConfigController extends AdminController
             amis()->HiddenControl('key', '引用标识')->remark('建议用字母命名并且 以 . 作为分隔')->maxLength(50)->required(),
             amis()->SelectControl('driver', '驱动')->disabled($isEdit)->options(admin_dict()->getOptions('uupt.filesystem.driver'))->value('local')->required(),
             amis()->SwitchControl('status', '开启')->onText('开启')->offText('关闭')->trueValue(1)->falseValue(0)->required(),
+            amis()->Divider()->title('详细配置')->titlePosition('center'),
             // 七牛云存储
             amis()->Container()->hiddenOn('${driver!="kodo"}')->body([
                 amis()->TextControl('config.domains.default', '七牛域名')->required()->remark('你的七牛域名'),
@@ -89,16 +90,21 @@ class FilesystemConfigController extends AdminController
             ]),
             // COS 腾讯云对象存储
             amis()->Container()->hiddenOn('${driver!="cos"}')->body([
-                amis()->TextControl('config.app_id', 'app_id')->required(),
-                amis()->TextControl('config.secret_id', 'secret_id')->required(),
-                amis()->TextControl('config.secret_key', 'secret_key')->required(),
+                amis()->TextControl('config.app_id', 'APP_ID')->required(),
+                amis()->TextControl('config.secret_id', 'SECRET_ID')->required(),
+                amis()->TextControl('config.secret_key', 'SECRET_KEY')->required(),
+
+                amis()->GroupControl()->body([
+                    amis()->TextControl('config.bucket', 'BUCKET')->remark('例如：demo-uupt-1325518132')->required(),
+                    amis()->TextControl('config.prefix', '全局路径前缀')->remark('根目录的话 直接为空，如果有开头不用以 / 开头'),
+                ]),
                 amis()->TextControl('config.region', 'region')->remark('例如: ap-guangzhou')->required()->remark('自定义域名，填写自定义域名。'),
-                amis()->TextControl('config.bucket', 'BUCKET')->remark('例如：demo-uupt-1325518132')->required(),
-                amis()->TextControl('config.prefix', '全局路径前缀')->remark('根目录的话 直接为空，如果有开头不用以 / 开头'),
-                amis()->TextControl('config.domain', '自定义域名')->remark('可选'),
                 amis()->TextControl('config.cdn', 'CND域名')->remark('可选，使用 CDN 域名时指定生成的 URL host'),
-                amis()->SwitchControl('config.use_https', '是否启用SSL')->remark('可选，是否使用 https，默认 开启')->trueValue(true)->falseValue(false)->value(true)->required(),
-                amis()->SwitchControl('config.signed_url', 'signed_url')->remark('可选，如果 bucket 为私有访问请打开此项')->trueValue(true)->falseValue(false)->value(false)->required(),
+                amis()->GroupControl()->body([
+                    amis()->SwitchControl('config.use_https', 'SSL')->remark('可选，是否使用 https，默认 开启')->trueValue(true)->falseValue(false)->value(true)->required(),
+                    amis()->SwitchControl('config.signed_url', '签名链接')->remark('可选，如果 bucket 为私有访问请打开此项')->trueValue(true)->falseValue(false)->value(false)->required(),
+                ]),
+                amis()->TextControl('config.domain', '自定义域名')->remark('可选'),
             ]),
             // 本地
             amis()->Container()->hiddenOn('${driver!="local"}')->body([
