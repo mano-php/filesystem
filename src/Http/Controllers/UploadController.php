@@ -60,13 +60,24 @@ class UploadController extends AdminController
      */
     protected function upload($type = 'file'): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
     {
+        try{
+
+            $disk = request()->route('disk', 'local');
+            [$basePath,$fileName] = self::doUpload($type,$disk);
+        }catch (\Throwable $throwable){
+            return $this->response()->fail(__('admin.upload_file_error'));
+        }
+
+        return $this->response()->success(['value' => $basePath . $fileName]);
+    }
+    public static function doUpload($type = 'file',$disk='local')
+    {
         $basePath = '/';
-        $disk = request()->route('disk', 'local');
         $diskConfig = FilesystemConfig::query()->where('key', $disk)->first();
         $file = request()->file('file');
 
         if (!$file) {
-            return $this->response()->fail(__('admin.upload_file_error'));
+            throw new \Exception('上传失败');
         }
         if (is_string($diskConfig->getAttribute('config'))) {
             $diskConfigBody = json_decode($diskConfig->getAttribute('config'), true);
@@ -108,6 +119,6 @@ class UploadController extends AdminController
 
         $filesystem->put($fileName, file_get_contents($file->getRealPath()));
 
-        return $this->response()->success(['value' => $basePath . $fileName]);
+        return [$basePath,$fileName,$file->getClientOriginalExtension()];
     }
 }
