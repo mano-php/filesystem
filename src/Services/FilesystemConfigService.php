@@ -18,6 +18,24 @@ class FilesystemConfigService extends AdminService
     protected string $modelName = FilesystemConfig::class;
 
     /**
+     * 列表 获取数据
+     *
+     * @return array
+     */
+    public function list()
+    {
+        $query = $this->listQuery();
+
+        $list  = $query->paginate(request()->input('perPage', 20));
+        $items = $list->items();
+        $total = $list->total();
+        foreach ($items as $key=>$item){
+            $items[$key]['status_name'] = $item['status'] == 1?'开启':'关闭';
+        }
+
+        return compact('items', 'total');
+    }
+    /**
      * saving 钩子 (执行于新增/修改前)
      *
      * 可以通过判断 $primaryKey 是否存在来判断是新增还是修改

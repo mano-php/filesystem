@@ -38,6 +38,45 @@ class FilesystemServiceProvider extends ServiceProvider
                 'updated_at'=>date('Y-m-d H:i:s'),
             ]);
         }
+        if(!FilesystemConfig::query()->where('key','kodo')->first()){
+            FilesystemConfig::query()->insert([
+                'name'=>'七牛云存储',
+                'desc'=>'存储在七牛云，前往开通七牛云存储服务',
+                'key'=>'kodo',
+                'driver'=>'kodo',
+                'config'=>json_encode([
+                    'bucket'=>''
+                ]),
+                'created_at'=>date('Y-m-d H:i:s'),
+                'updated_at'=>date('Y-m-d H:i:s'),
+            ]);
+        }
+        if(!FilesystemConfig::query()->where('key','oss')->first()){
+            FilesystemConfig::query()->insert([
+                'name'=>'阿里云OSS',
+                'desc'=>'存储在阿里云，请前往阿里云开通存储服务',
+                'key'=>'oss',
+                'driver'=>'oss',
+                'config'=>json_encode([
+                    'bucket'=>''
+                ]),
+                'created_at'=>date('Y-m-d H:i:s'),
+                'updated_at'=>date('Y-m-d H:i:s'),
+            ]);
+        }
+        if(!FilesystemConfig::query()->where('key','cos')->first()){
+            FilesystemConfig::query()->insert([
+                'name'=>'腾讯云COS',
+                'desc'=>'存储在腾讯云，请前往腾讯云开通存储服务',
+                'key'=>'cos',
+                'driver'=>'cos',
+                'config'=>json_encode([
+                    'bucket'=>''
+                ]),
+                'created_at'=>date('Y-m-d H:i:s'),
+                'updated_at'=>date('Y-m-d H:i:s'),
+            ]);
+        }
     }
     protected function installDict()
     {
