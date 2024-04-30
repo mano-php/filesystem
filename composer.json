@@ -1,16 +1,16 @@
 {
-    "name": "uupt-open/filesystem",
+    "name": "mano/filesystem",
     "alias": "文件系统",
     "description": "支持 本地 OSS COS 七牛云，文件上传、线上预览、程序调用、等功能。",
     "type": "library",
-    "version": "1.0.0",
-    "keywords": ["owl-admin", "extension"],
-    "homepage": "https://github.com/uupt/filesystem",
+    "version": "1.0.1",
+    "keywords": [ "extension"],
+    "homepage": "https://github.com/mano-php/filesystem",
     "license": "MIT",
     "authors": [
         {
-            "name": "UU跑腿",
-            "email": "admin@uupt.com"
+            "name": "Mano",
+            "email": "ManoCode@gmail.com"
         }
     ],
     "require": {
@@ -23,14 +23,14 @@
     },
     "autoload": {
         "psr-4": {
-            "Uupt\\FileSystem\\": "src/"
+            "Mano\\FileSystem\\": "src/"
         }
     },
     "extra": {
-        "owl-admin": "Uupt\\FileSystem\\FilesystemServiceProvider",
+        "owl-admin": "Mano\\FileSystem\\FilesystemServiceProvider",
         "laravel": {
             "providers": [
-                "Uupt\\FileSystem\\FilesystemServiceProvider"
+                "Mano\\FileSystem\\FilesystemServiceProvider"
             ]
         }
     }
