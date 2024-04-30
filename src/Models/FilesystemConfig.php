@@ -1,6 +1,6 @@
 <?php
 
-namespace Uupt\FileSystem\Models;
+namespacemano-code\FileSystem\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Slowlyo\OwlAdmin\Models\BaseModel as Model;

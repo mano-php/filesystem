@@ -1,11 +1,11 @@
 <?php
 
-namespace Uupt\FileSystem\Http\Controllers;
+namespacemano-code\FileSystem\Http\Controllers;
 
 use Slowlyo\OwlAdmin\Renderers\Page;
 use Slowlyo\OwlAdmin\Renderers\Form;
 use Slowlyo\OwlAdmin\Controllers\AdminController;
-use Uupt\FileSystem\Services\FilesystemConfigService;
+usemano-code\FileSystem\Services\FilesystemConfigService;
 
 /**
  * 文件系统

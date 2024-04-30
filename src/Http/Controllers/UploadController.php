@@ -1,13 +1,13 @@
 <?php
 
-namespace Uupt\FileSystem\Http\Controllers;
+namespacemano-code\FileSystem\Http\Controllers;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Slowlyo\OwlAdmin\Admin;
 use Slowlyo\OwlAdmin\Controllers\AdminController;
-use Uupt\FileSystem\Models\FilesystemConfig;
+usemano-code\FileSystem\Models\FilesystemConfig;
 
 /**
  * 上传文件工具类

@@ -1,13 +1,13 @@
 <?php
 
-namespace Uupt\FileSystem;
+namespacemano-code\FileSystem;
 
 use Illuminate\Support\Facades\Cache;
 use Slowlyo\OwlAdmin\Extend\Extension;
 use Slowlyo\OwlAdmin\Renderers\TextControl;
 use Slowlyo\OwlAdmin\Extend\ServiceProvider;
 use Slowlyo\OwlDict\Models\AdminDict as AdminDictModel;
-use Uupt\FileSystem\Models\FilesystemConfig;
+usemano-code\FileSystem\Models\FilesystemConfig;
 
 class FilesystemServiceProvider extends ServiceProvider
 {

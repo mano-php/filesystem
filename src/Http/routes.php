@@ -1,7 +1,7 @@
 <?php
 
 use Slowlyo\OwlAdmin\Admin;
-use Uupt\FileSystem\Http\Controllers;
+usemano-code\FileSystem\Http\Controllers;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 // 文件系统配置
