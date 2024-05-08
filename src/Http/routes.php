@@ -1,11 +1,11 @@
 <?php
 
 use Slowlyo\OwlAdmin\Admin;
-usemano-code\FileSystem\Http\Controllers;
+use ManoCode\FileSystem\Http\Controllers;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 // 文件系统配置
-Route::resource('filesystem_config', \Uupt\FileSystem\Http\Controllers\FilesystemConfigController::class);
+Route::resource('filesystem_config', \ManoCode\FileSystem\Http\Controllers\FilesystemConfigController::class);
 
 Route::get('filesystem', [Controllers\FilesystemController::class, 'index']);
 

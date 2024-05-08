@@ -23,14 +23,14 @@
     },
     "autoload": {
         "psr-4": {
-            "mano-code\\FileSystem\\": "src/"
+            "ManoCode\\FileSystem\\": "src/"
         }
     },
     "extra": {
-        "owl-admin": "mano-code\\FileSystem\\FilesystemServiceProvider",
+        "owl-admin": "ManoCode\\FileSystem\\FilesystemServiceProvider",
         "laravel": {
             "providers": [
-                "mano-code\\FileSystem\\FilesystemServiceProvider"
+                "ManoCode\\FileSystem\\FilesystemServiceProvider"
             ]
         }
     }

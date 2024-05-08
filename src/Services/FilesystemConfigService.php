@@ -1,10 +1,10 @@
 <?php
 
-namespacemano-code\FileSystem\Services;
+namespace ManoCode\FileSystem\Services;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-usemano-code\FileSystem\Models\FilesystemConfig;
+use ManoCode\FileSystem\Models\FilesystemConfig;
 use Slowlyo\OwlAdmin\Services\AdminService;
 
 /**
