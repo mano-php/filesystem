@@ -24,7 +24,10 @@
     "autoload": {
         "psr-4": {
             "ManoCode\\FileSystem\\": "src/"
-        }
+        },
+        "files": [
+            "src/functions.php"
+        ]
     },
     "extra": {
         "owl-admin": "ManoCode\\FileSystem\\FilesystemServiceProvider",
