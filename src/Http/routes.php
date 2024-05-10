@@ -9,4 +9,4 @@ Route::resource('filesystem_config', \ManoCode\FileSystem\Http\Controllers\Files
 
 Route::get('filesystem', [Controllers\FilesystemController::class, 'index']);
 
-Route::any('/uupt/upload/{disk}/upload-image',[Controllers\UploadController::class,'uploadImage']);
+Route::any('/mano-code/upload/{disk}/upload-image',[Controllers\UploadController::class,'uploadImage']);
