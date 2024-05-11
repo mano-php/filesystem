@@ -31,9 +31,10 @@ class FilesystemConfigController extends AdminController
                 amis()->TableColumn('desc', '描述'),
 //				amis()->TableColumn('key', '引用标识'),
                 amis()->SelectControl('driver', '驱动')->options(admin_dict()->getOptions('uupt.filesystem.driver'))->static(),
-                amis()->TagControl('status_name','状态')->color('${status==1?"success":"active"}')->displayMode('status')->type('tag')->static(),
-                amis()->TableColumn('created_at', __('admin.created_at'))->set('type', 'datetime')->sortable(),
-                amis()->TableColumn('updated_at', __('admin.updated_at'))->set('type', 'datetime')->sortable(),
+                amis()->TableColumn('status', '是否开启')->quickEdit(
+                    amis()->SwitchControl()->mode('inline')->saveImmediately(true)
+                ),
+                amis()->TableColumn('updated_at', __('admin.updated_at'))->set('type', 'datetime'),
                 $this->rowActions(true)
             ]);
 
@@ -68,7 +69,7 @@ class FilesystemConfigController extends AdminController
             amis()->TextareaControl('desc', '描述')->disabled()->required(),
             amis()->HiddenControl('key', '引用标识')->remark('建议用字母命名并且 以 . 作为分隔')->maxLength(50)->required(),
             amis()->SelectControl('driver', '驱动')->disabled($isEdit)->options(admin_dict()->getOptions('uupt.filesystem.driver'))->value('local')->required(),
-            amis()->SwitchControl('status', '开启')->onText('开启')->offText('关闭')->trueValue(1)->falseValue(0)->required(),
+            amis()->HiddenControl('status', '开启')->value(0)->required(),
             amis()->Divider()->title('详细配置')->titlePosition('center'),
             // 七牛云存储
             amis()->Container()->hiddenOn('${driver!="kodo"}')->body([
