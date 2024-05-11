@@ -4,6 +4,7 @@ namespace ManoCode\FileSystem\Services;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use ManoCode\FileSystem\Models\FilesystemConfig;
 use Slowlyo\OwlAdmin\Services\AdminService;
 
@@ -16,7 +17,34 @@ use Slowlyo\OwlAdmin\Services\AdminService;
 class FilesystemConfigService extends AdminService
 {
     protected string $modelName = FilesystemConfig::class;
-
+    /**
+     * 快速编辑单条
+     *
+     * @param $data
+     *
+     * @return bool
+     */
+    public function quickEditItem($data)
+    {
+        if($data['status']){
+            FilesystemConfig::query()->where('id','<>',$data)->update(['status'=>0]);
+            $data['status'] = 1;
+        }else{
+            $data['status'] = 0;
+        }
+        return $this->update(Arr::pull($data, $this->primaryKey()), $data);
+    }
+    /**
+     * 排序
+     *
+     * @param $query
+     *
+     * @return void
+     */
+    public function sortable($query)
+    {
+        $query->orderBy('id','ASC');
+    }
     /**
      * 列表 获取数据
      *
@@ -31,6 +59,7 @@ class FilesystemConfigService extends AdminService
         $total = $list->total();
         foreach ($items as $key=>$item){
             $items[$key]['status_name'] = $item['status'] == 1?'开启':'关闭';
+            $items[$key]['config'] = json_decode($item['config'],true);
         }
 
         return compact('items', 'total');
