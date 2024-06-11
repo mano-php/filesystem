@@ -35,6 +35,7 @@ class FilesystemServiceProvider extends ServiceProvider
                     'root'=>'uploads',
                     'throw'=>false
                 ]),
+                'status'=>1,
                 'created_at'=>date('Y-m-d H:i:s'),
                 'updated_at'=>date('Y-m-d H:i:s'),
             ]);

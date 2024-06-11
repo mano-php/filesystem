@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('desc')->nullable()->comment('描述');
             $table->string('key',50)->index()->comment('引用标识');
             $table->string('driver',50)->index()->comment('驱动');
-            $table->integer('status')->default(1)->index()->comment('状态');
+            $table->integer('status')->default(0)->index()->comment('状态');
             $table->text('config')->comment('配置内容');
             $table->timestamps();
             $table->softDeletes();
