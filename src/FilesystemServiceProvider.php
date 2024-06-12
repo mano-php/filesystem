@@ -22,6 +22,9 @@ class FilesystemServiceProvider extends ServiceProvider
     ];
     public function install()
     {
+        if (!is_dir(base_path().'/public/uploads/')) {
+           mkdir(base_path().'/public/uploads/', 0777, true)
+        }
         parent::install();
         $this->installDict();
         if(!FilesystemConfig::query()->where('key','local')->first()){
