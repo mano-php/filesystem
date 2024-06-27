@@ -26,11 +26,11 @@ class FilesystemConfigService extends AdminService
      */
     public function quickEditItem($data)
     {
-        if($data['status']){
-            FilesystemConfig::query()->where('id','<>',$data)->update(['status'=>0]);
-            $data['status'] = 1;
+        if($data['state']){
+            FilesystemConfig::query()->where('id','<>',$data)->update(['state'=>0]);
+            $data['state'] = 1;
         }else{
-            $data['status'] = 0;
+            $data['state'] = 0;
         }
         return $this->update(Arr::pull($data, $this->primaryKey()), $data);
     }
@@ -58,7 +58,6 @@ class FilesystemConfigService extends AdminService
         $items = $list->items();
         $total = $list->total();
         foreach ($items as $key=>$item){
-            $items[$key]['status_name'] = $item['status'] == 1?'开启':'关闭';
             $items[$key]['config'] = json_decode($item['config'],true);
         }
 
