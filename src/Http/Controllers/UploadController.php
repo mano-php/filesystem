@@ -23,7 +23,7 @@ class UploadController extends AdminController
 
     public function uploadFile(): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
     {
-        return $this->upload();
+        return $this->upload('file');
     }
 
     public function uploadRich(): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
@@ -60,65 +60,197 @@ class UploadController extends AdminController
      */
     protected function upload($type = 'file'): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
     {
-        try{
+        try {
 
             $disk = request()->route('disk', 'local');
-            [$basePath,$fileName] = self::doUpload($type,$disk);
-        }catch (\Throwable $throwable){
-            return $this->response()->fail(__('admin.upload_file_error'));
+            [$basePath, $fileName] = self::doUpload($type, $disk);
+        } catch (\Throwable $throwable) {
+            return $this->response()->fail(__('admin.upload_file_error') . ":{$throwable->getMessage()}");
         }
 
         return $this->response()->success(['value' => $basePath . $fileName]);
     }
-    public static function doUpload($type = 'file',$disk='local')
+
+
+    public function chunkUploadStart()
     {
-        $basePath = '/';
-        $diskConfig = FilesystemConfig::query()->where('key', $disk)->first();
+        $uploadId = Str::uuid();
+
+        cache()->put($uploadId, [], 600);
+
+        app('filesystem')->makeDirectory(storage_path('app/public/chunk/' . $uploadId));
+
+        return $this->response()->success(compact('uploadId'));
+    }
+
+    public function chunkUpload()
+    {
+        $uploadId = request('uploadId');
+        $partNumber = request('partNumber');
         $file = request()->file('file');
 
+        $path = 'chunk/' . $uploadId;
+
+        $file->storeAs($path, $partNumber, 'public');
+
+        $eTag = md5(Storage::disk('public')->get($path . '/' . $partNumber));
+
+        return $this->response()->success(compact('eTag'));
+    }
+
+    public function chunkUploadFinish()
+    {
+        $fileName = request('filename');
+        $partList = request('partList');
+        $uploadId = request('uploadId');
+        $type = request('t');
+
+        $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+        $path = $type . '/' . $uploadId . '.' . $ext;
+        $fullPath = storage_path('app/public/' . $path);
+
+        $dir = dirname($fullPath);
+        if (!is_dir($dir)) {
+            app('filesystem')->makeDirectory($dir);
+        }
+
+        for ($i = 0; $i < count($partList); $i++) {
+            $partNumber = $partList[$i]['partNumber'];
+            $eTag = $partList[$i]['eTag'];
+
+            $partPath = 'chunk/' . $uploadId . '/' . $partNumber;
+
+            $partETag = md5(Storage::disk('public')->get($partPath));
+
+            if ($eTag != $partETag) {
+                return $this->response()->fail('分片上传失败');
+            }
+
+            file_put_contents($fullPath, Storage::disk('public')->get($partPath), FILE_APPEND);
+        }
+
+        clearstatcache();
+
+        app('files')->deleteDirectory(storage_path('app/public/chunk/' . $uploadId));
+        try {
+            $disk = request()->route('disk', 'local');
+            [$basePath, $fileName] = self::uploadDoUpload($fullPath, 'file', $disk);
+        } catch (\Throwable $throwable) {
+            return $this->response()->fail(__('admin.upload_file_error') . ":{$throwable->getMessage()}");
+        }
+
+        return $this->response()->success(['value' => $basePath . $fileName]);
+    }
+
+
+    /**
+     * @param string $type
+     * @param string $disk
+     * @return array
+     * @throws \Exception
+     */
+    public static function doUpload($type = 'file', $disk = 'local')
+    {
+        $file = request()->file('file');
         if (!$file) {
             throw new \Exception('上传失败');
         }
-        if (is_string($diskConfig->getAttribute('config'))) {
-            $diskConfigBody = json_decode($diskConfig->getAttribute('config'), true);
-        }
-        $diskConfigBody['driver'] = $diskConfig->getAttribute('driver');
-        // 本地路径处理
-        if ($diskConfig->getAttribute('driver') === 'local') {
-            $diskConfigBody['base_path'] = base_path($diskConfigBody['root']);
-            $basePath = str_replace(base_path(), '', $diskConfigBody['root']) . '/';
-            $diskConfigBody['throw'] = boolval($diskConfigBody['throw']);
-        }
-        // OSS 参数修正
-        if ($diskConfig->getAttribute('driver') === 'oss') {
-            $diskConfigBody['root'] = strval($diskConfigBody['root']);
-            if (!$diskConfigBody['isCName']) {
-                $basePath = "https://{$diskConfigBody['bucket']}.{$diskConfigBody['endpoint']}/";
-            } else {
-                $basePath = "{$diskConfigBody['endpoint']}/";
-            }
-        }
-        if ($diskConfig->getAttribute('driver') === 'cos') {
-            if (!(isset($diskConfigBody['domain']) && strval($diskConfigBody['domain']) >= 1)) {
-                $diskConfigBody['domain'] = "{$diskConfigBody['bucket']}.cos.{$diskConfigBody['region']}.myqcloud.com";
-            }
-            $basePath = "https://{$diskConfigBody['domain']}/";
-            if (!(isset($diskConfigBody['prefix']) && strval($diskConfigBody['prefix']) >= 1)) {
-                $diskConfigBody['prefix'] = '/';
-            }
-        }
-        if($diskConfig->getAttribute('driver') === 'kodo'){
-            $basePath = "https://{$diskConfigBody['domains']['https']}/";
-            $diskConfigBody['driver'] = 'qiniu';
-        }
-        $filesystem = Storage::build($diskConfigBody);
-        do {
-            $fileName = Admin::config('admin.upload.directory.' . $type) . '/' . Str::random(50) . ".{$file->getClientOriginalExtension()}";
 
+        $originFile = $file->getRealPath();
+        $ext = $file->getClientOriginalExtension();
+
+        return self::handleUpload($originFile, $type, $disk, $ext);
+    }
+
+    public function uploadDoUpload($originFile, $type = 'file', $disk = 'local')
+    {
+        $ext = pathinfo($originFile, PATHINFO_EXTENSION);
+        return self::handleUpload($originFile, $type, $disk, $ext);
+    }
+
+    /**
+     * @param string $originFile
+     * @param string $type
+     * @param string $disk
+     * @param string $ext
+     * @return array
+     */
+    private static function handleUpload($originFile, $type, $disk, $ext)
+    {
+        $diskConfig = self::getDiskConfig($disk);
+        $diskConfigBody = self::processDiskConfig($diskConfig);
+        $basePath = self::getBasePath($diskConfigBody);
+
+        $filesystem = Storage::build($diskConfigBody);
+
+        $fileName = self::generateUniqueFileName($filesystem, $type, $ext);
+
+        $filesystem->put($fileName, file_get_contents($originFile));
+
+        return [$basePath, $fileName, $ext];
+    }
+
+    private static function getDiskConfig($disk)
+    {
+        return FilesystemConfig::query()->where('key', $disk)->first();
+    }
+
+    private static function processDiskConfig($diskConfig)
+    {
+        $diskConfigBody = is_string($diskConfig->getAttribute('config'))
+            ? json_decode($diskConfig->getAttribute('config'), true)
+            : $diskConfig->getAttribute('config');
+
+        $diskConfigBody['driver'] = $diskConfig->getAttribute('driver');
+
+        switch ($diskConfigBody['driver']) {
+            case 'local':
+                $diskConfigBody['base_path'] = base_path($diskConfigBody['root']);
+                $diskConfigBody['throw'] = boolval($diskConfigBody['throw']);
+                break;
+            case 'oss':
+                $diskConfigBody['root'] = strval($diskConfigBody['root']);
+                break;
+            case 'cos':
+                if (!(isset($diskConfigBody['domain']) && strval($diskConfigBody['domain']) >= 1)) {
+                    $diskConfigBody['domain'] = "{$diskConfigBody['bucket']}.cos.{$diskConfigBody['region']}.myqcloud.com";
+                }
+                if (!(isset($diskConfigBody['prefix']) && strval($diskConfigBody['prefix']) >= 1)) {
+                    $diskConfigBody['prefix'] = '/';
+                }
+                break;
+            case 'kodo':
+                $diskConfigBody['driver'] = 'qiniu';
+                break;
+        }
+
+        return $diskConfigBody;
+    }
+
+    private static function getBasePath($diskConfigBody)
+    {
+        switch ($diskConfigBody['driver']) {
+            case 'local':
+                return str_replace(base_path(), '', $diskConfigBody['root']) . '/';
+            case 'oss':
+                return $diskConfigBody['isCName']
+                    ? "{$diskConfigBody['endpoint']}/"
+                    : "https://{$diskConfigBody['bucket']}.{$diskConfigBody['endpoint']}/";
+            case 'cos':
+                return "https://{$diskConfigBody['domain']}/";
+            case 'qiniu':
+                return "https://{$diskConfigBody['domains']['https']}/";
+            default:
+                return '/';
+        }
+    }
+
+    private static function generateUniqueFileName($filesystem, $type, $ext)
+    {
+        do {
+            $fileName = Admin::config('admin.upload.directory.' . $type) . '/' . Str::random(50) . ".{$ext}";
         } while ($filesystem->exists($fileName));
 
-        $filesystem->put($fileName, file_get_contents($file->getRealPath()));
-
-        return [$basePath,$fileName,$file->getClientOriginalExtension()];
+        return $fileName;
     }
 }
