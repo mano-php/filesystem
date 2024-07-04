@@ -235,7 +235,7 @@ class UploadController extends AdminController
             case 'oss':
                 return $diskConfigBody['isCName']
                     ? "{$diskConfigBody['endpoint']}/"
-                    : "https://{$diskConfigBody['bucket']}.{$diskConfigBody['endpoint']}/";
+                    : "https://{$diskConfigBody['bucket']}.{$diskConfigBody['endpoint']}/{$diskConfigBody['root']}";
             case 'cos':
                 return "https://{$diskConfigBody['domain']}/";
             case 'qiniu':
