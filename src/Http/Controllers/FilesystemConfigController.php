@@ -30,7 +30,7 @@ class FilesystemConfigController extends AdminController
                 amis()->TableColumn('name', '名称'),
                 amis()->TableColumn('desc', '描述'),
 //				amis()->TableColumn('key', '引用标识'),
-                amis()->SelectControl('driver', '驱动')->options(admin_dict()->getOptions('uupt.filesystem.driver'))->static(),
+                amis()->SelectControl('driver', '驱动')->options(admin_dict()->getOptions('filesystem.driver'))->static(),
                 amis()->TableColumn('state', '是否开启')->quickEdit(
                     amis()->SwitchControl()->mode('inline')->saveImmediately(true)
                 ),
@@ -68,7 +68,7 @@ class FilesystemConfigController extends AdminController
             amis()->TextControl('name', '名称')->disabled()->required(),
             amis()->TextareaControl('desc', '描述')->disabled()->required(),
             amis()->HiddenControl('key', '引用标识')->remark('建议用字母命名并且 以 . 作为分隔')->maxLength(50)->required(),
-            amis()->SelectControl('driver', '驱动')->disabled($isEdit)->options(admin_dict()->getOptions('uupt.filesystem.driver'))->value('local')->required(),
+            amis()->SelectControl('driver', '驱动')->disabled($isEdit)->options(admin_dict()->getOptions('filesystem.driver'))->value('local')->required(),
             amis()->HiddenControl('state', '开启')->value(0)->required(),
             amis()->Divider()->title('详细配置')->titlePosition('center'),
             // 七牛云存储
@@ -96,7 +96,7 @@ class FilesystemConfigController extends AdminController
                 amis()->TextControl('config.secret_key', 'SECRET_KEY')->required(),
 
                 amis()->GroupControl()->body([
-                    amis()->TextControl('config.bucket', 'BUCKET')->remark('例如：demo-uupt-1325518132')->required(),
+                    amis()->TextControl('config.bucket', 'BUCKET')->remark('例如：demo-1325518132')->required(),
                     amis()->TextControl('config.prefix', '全局路径前缀')->remark('根目录的话 直接为空，如果有开头不用以 / 开头'),
                 ]),
                 amis()->TextControl('config.region', 'region')->remark('例如: ap-guangzhou')->required()->remark('自定义域名，填写自定义域名。'),

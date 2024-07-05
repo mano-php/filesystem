@@ -2,10 +2,12 @@
 
 namespace ManoCode\FileSystem;
 
-use ManoCode\FileSystem\Extend\ManoCodeServiceProvider;
+use ManoCode\CustomExtend\Extend\ManoCodeServiceProvider;
 use ManoCode\FileSystem\Models\FilesystemConfig;
-//
 
+/**
+ * 文件存储系统服务提供者
+ */
 class FilesystemServiceProvider extends ManoCodeServiceProvider
 {
 
@@ -20,27 +22,27 @@ class FilesystemServiceProvider extends ManoCodeServiceProvider
     ];
     protected $dict = [
         [
-            'key' => 'uupt.filesystem.driver',
+            'key' => 'filesystem.driver',
             'value' => '文件系统驱动',
             'parent' => '',
         ],
         [
-            'parent' => 'uupt.filesystem.driver',
+            'parent' => 'filesystem.driver',
             'key' => 'local',
             'value' => '本地存储'
         ],
         [
-            'parent' => 'uupt.filesystem.driver',
+            'parent' => 'filesystem.driver',
             'key' => 'kodo',
             'value' => '七牛云kodo'
         ],
         [
-            'parent' => 'uupt.filesystem.driver',
+            'parent' => 'filesystem.driver',
             'key' => 'cos',
             'value' => '腾讯云COS'
         ],
         [
-            'parent' => 'uupt.filesystem.driver',
+            'parent' => 'filesystem.driver',
             'key' => 'oss',
             'value' => '阿里云OSS'
         ],

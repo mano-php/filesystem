@@ -1,13 +1,13 @@
 # 文件存储、上传扩展
 
 
-#### 扩展使用Laravel FileSystem 作为存储底层驱动
+#### 扩展使用Laravel FileSystem 接口 作为存储底层驱动
 
 ### 1. 表单使用
 
 ```php
 return $this->baseForm()->body([
-            amis()->HiddenControl('id','ID','local'), 
+            amis()->HiddenControl('id','ID'), 
             ManoImageControl('goods_image','商品主图')->required(), // local为默认存储驱动 也可以配置七牛 或者腾讯OCS 或者阿里云OSS
 ]);
 ```
@@ -17,7 +17,16 @@ return $this->baseForm()->body([
 ```php
 return $this->baseForm()->body([
             amis()->HiddenControl('id','ID'), 
-            ManoRichTextControl('content','商品详情','local')->required(), // local为默认存储驱动 也可以配置七牛 或者腾讯OCS 或者阿里云OSS
+            ManoRichTextControl('content','商品详情')->required(), // local为默认存储驱动 也可以配置七牛 或者腾讯OCS 或者阿里云OSS
+]);
+```
+
+### 3. 附件上传
+
+```php
+return $this->baseForm()->body([
+            amis()->HiddenControl('id','ID'), 
+            ManoFileControl('content','商品详情')->required(), // local为默认存储驱动 也可以配置七牛 或者腾讯OCS 或者阿里云OSS
 ]);
 ```
 
