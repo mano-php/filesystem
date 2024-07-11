@@ -18,7 +18,7 @@ class FilesystemServiceProvider extends ManoCodeServiceProvider
             'url' => '/filesystem_config',
             'url_type' => '1',
             'icon' => 'ant-design:file-zip-outlined',
-        ]
+        ],
     ];
     protected $dict = [
         [
@@ -42,6 +42,15 @@ class FilesystemServiceProvider extends ManoCodeServiceProvider
                     'value' => '阿里云OSS'
                 ]
             ]
+        ]
+    ];
+    protected $permission = [
+        [
+            'name'=>'文件上传',
+            'slug'=>'file-upload-api',
+            'method'=>[],// 空则代表ANY
+            'path'=>['/mano-code/upload/*'],// 授权接口
+            'parent'=>'',// 父级权限slug字段
         ]
     ];
 
