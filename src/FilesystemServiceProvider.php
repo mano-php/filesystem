@@ -51,7 +51,7 @@ class FilesystemServiceProvider extends ManoCodeServiceProvider
             'method'=>[],// 空则代表ANY
             'path'=>['/mano-code/upload/*'],// 授权接口
             'parent'=>'',// 父级权限slug字段
-        ]
+        ],
     ];
 
 
@@ -59,10 +59,18 @@ class FilesystemServiceProvider extends ManoCodeServiceProvider
     {
         parent::boot();
         require_once(__DIR__ . DIRECTORY_SEPARATOR . 'functions.php');
+        try{
+            Schema::table('admin_dict', function (Blueprint $table) {
+                $table->string('extension')->nullable()->comment('扩展');
+            });
+        }catch (\Throwable $throwable){
+            
+        }
     }
 
     public function install()
     {
+        $this->publishable();
         if (!is_dir(base_path() . '/public/uploads/')) {
             mkdir(base_path() . '/public/uploads/', 0777, true);
         }
