@@ -59,13 +59,6 @@ class FilesystemServiceProvider extends ManoCodeServiceProvider
     {
         parent::boot();
         require_once(__DIR__ . DIRECTORY_SEPARATOR . 'functions.php');
-        try{
-            Schema::table('admin_dict', function (Blueprint $table) {
-                $table->string('extension')->nullable()->comment('扩展');
-            });
-        }catch (\Throwable $throwable){
-            
-        }
     }
 
     public function install()
