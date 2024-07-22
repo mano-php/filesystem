@@ -17,13 +17,22 @@ class UploadController extends AdminController
 
     public function uploadImage(): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
     {
-        return $this->upload('image');
+        try{
+            [$basePath,$fileName] = $this->upload('image');
+        }catch (\Throwable $throwable){
+            return $this->response()->fail(__('admin.upload_file_error') . ":{$throwable->getMessage()}");
+        }
+        return $this->response()->success(['value' => $basePath . $fileName]);
     }
-
 
     public function uploadFile(): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
     {
-        return $this->upload('file');
+        try{
+            [$basePath,$fileName] = $this->upload('file');
+        }catch (\Throwable $throwable){
+            return $this->response()->fail(__('admin.upload_file_error') . ":{$throwable->getMessage()}");
+        }
+        return $this->response()->success(['value' => $basePath . $fileName]);
     }
 
     public function uploadRich(): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
@@ -58,17 +67,11 @@ class UploadController extends AdminController
      * @param $type
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
      */
-    protected function upload($type = 'file'): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
+    public function upload($type = 'file'): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
     {
-        try {
-
-            $disk = request()->route('disk', 'local');
-            [$basePath, $fileName] = self::doUpload($type, $disk);
-        } catch (\Throwable $throwable) {
-            return $this->response()->fail(__('admin.upload_file_error') . ":{$throwable->getMessage()}");
-        }
-
-        return $this->response()->success(['value' => $basePath . $fileName]);
+        $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        [$basePath, $fileName] = self::doUpload($type, $disk);
+        return [$basePath, $fileName];
     }
 
 

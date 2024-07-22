@@ -3,7 +3,7 @@
     "alias": "文件系统",
     "description": "支持 本地 OSS COS 七牛云，文件上传、线上预览、程序调用、等功能。",
     "type": "library",
-    "version": "v1.2.6",
+    "version": "v1.2.7",
     "keywords": [ "extension"],
     "homepage": "https://github.com/mano-php/filesystem",
     "license": "MIT",
@@ -17,7 +17,7 @@
         "php": ">=8.0",
         "slowlyo/owl-admin": "*",
         "slowlyo/owl-dict": "*",
-        "iidestiny/laravel-filesystem-oss": "3.3",
+        "iidestiny/flysystem-oss": "^4.1",
         "overtrue/laravel-filesystem-cos": "3.5.0",
         "zgldh/qiniu-laravel-storage": "^9.0",
         "mano-code/custom-extend": "*"
@@ -34,7 +34,8 @@
         "owl-admin": "ManoCode\\FileSystem\\FilesystemServiceProvider",
         "laravel": {
             "providers": [
-                "ManoCode\\FileSystem\\FilesystemServiceProvider"
+                "ManoCode\\FileSystem\\FilesystemServiceProvider",
+                "ManoCode\\FileSystem\\Adapter\\OssStorageServiceProvider"
             ]
         }
     }

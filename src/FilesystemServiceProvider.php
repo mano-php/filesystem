@@ -2,6 +2,9 @@
 
 namespace ManoCode\FileSystem;
 
+use Iidestiny\Flysystem\Oss\OssAdapter;
+use Illuminate\Filesystem\FilesystemAdapter;
+use League\Flysystem\Filesystem;
 use ManoCode\CustomExtend\Extend\ManoCodeServiceProvider;
 use ManoCode\FileSystem\Models\FilesystemConfig;
 
@@ -57,6 +60,24 @@ class FilesystemServiceProvider extends ManoCodeServiceProvider
 
     public function boot()
     {
+        app('filesystem')->extend('oss', function ($app, $config) {
+            $root = $config['root'] ?? null;
+            $buckets = $config['buckets'] ?? [];
+
+            $adapter = new \ManoCode\FileSystem\Adapter\OssAdapter(
+                $config['access_key'],
+                $config['secret_key'],
+                $config['endpoint'],
+                $config['bucket'],
+                $config['isCName'],
+                $root,
+                $buckets
+            );
+
+            $adapter->setCdnUrl($config['url'] ?? null);
+
+            return new FilesystemAdapter(new Filesystem($adapter), $adapter, $config);
+        });
         parent::boot();
         require_once(__DIR__ . DIRECTORY_SEPARATOR . 'functions.php');
     }
