@@ -47,3 +47,31 @@ $crud = $this->baseCRUD()
                 // .........
         ]);
 ```
+
+
+#### API接口使用上传文件接口 在src/Http/api_routes.php 内定义上传路由 表单字段为 `file`
+
+```php
+/**
+ * 测试上传接口
+ */
+Route::any('/api-upload-demo', function () {
+    $upload = new ManoCode\FileSystem\Http\Controllers\UploadController();
+    try {
+        /**
+         * 参数一 类型 image or file
+         * 参数二 form 字段 例如默认的 `file`
+         */
+        [$basePath, $fileName] = $upload->upload('image','file'); // image | file
+    } catch (\Throwable $throwable) {
+        return response()->json([
+            'status' => 400,
+            'msg' => '上传失败',
+        ]);
+    }
+    return response()->json(['status' => 200, 'msg' => '上传成功', 'data' => [
+        'basePath' => $basePath,
+        'fileName' => $fileName
+    ]]);
+});
+```

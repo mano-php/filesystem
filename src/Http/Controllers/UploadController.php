@@ -67,10 +67,10 @@ class UploadController extends AdminController
      * @param $type
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
      */
-    public function upload($type = 'file'):array
+    public function upload($type = 'file',$key='file'):array
     {
         $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
-        [$basePath, $fileName] = self::doUpload($type, $disk);
+        [$basePath, $fileName] = self::doUpload($type, $disk,$key);
         return [$basePath, $fileName];
     }
 
@@ -152,9 +152,9 @@ class UploadController extends AdminController
      * @return array
      * @throws \Exception
      */
-    public static function doUpload($type = 'file', $disk = 'local')
+    public static function doUpload($type = 'file', $disk = 'local',$key='file')
     {
-        $file = request()->file('file');
+        $file = request()->file($key);
         if (!$file) {
             throw new \Exception('上传失败');
         }
