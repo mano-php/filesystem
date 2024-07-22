@@ -67,7 +67,7 @@ class UploadController extends AdminController
      * @param $type
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
      */
-    public function upload($type = 'file'): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
+    public function upload($type = 'file'):array
     {
         $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
         [$basePath, $fileName] = self::doUpload($type, $disk);
