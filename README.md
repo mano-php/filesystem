@@ -12,12 +12,13 @@ return $this->baseForm()->body([
 ]);
 ```
 
-### 2. 富文本图片存储
+### 2. 富文本 图片、文件、视频 上传
 
 ```php
 return $this->baseForm()->body([
             amis()->HiddenControl('id','ID'), 
             ManoRichTextControl('content','商品详情')->required(), // local为默认存储驱动 也可以配置七牛 或者腾讯OCS 或者阿里云OSS
+            ManoWangEditorControl('content','详细描述')->required(), // local为默认存储驱动 也可以配置七牛 或者腾讯OCS 或者阿里云OSS
 ]);
 ```
 

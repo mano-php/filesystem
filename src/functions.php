@@ -29,10 +29,11 @@ if (!function_exists('ManoRichTextControl')) {
     }
 }
 
-if (!function_exists('WangEditorControl')) {
-    function WangEditorControl(string $name = '', string $label = '')
+if (!function_exists('ManoWangEditorControl')) {
+    function ManoWangEditorControl(string $name = '', string $label = '')
     {
+        $prefix = (string)Admin::config('admin.route.prefix');
         $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
-        return amis()->WangEditor($name, $label)->uploadImageServer("/mano-code/upload/{$disk}/upload-rich")->uploadVideoServer("/mano-code/upload/{$disk}/upload-rich");
+        return amis()->WangEditor($name, $label)->uploadImageServer("/{$prefix}/mano-code/upload/{$disk}/upload-rich")->uploadVideoServer("/{$prefix}/mano-code/upload/{$disk}/upload-rich");
     }
 }

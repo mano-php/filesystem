@@ -17,9 +17,9 @@ class UploadController extends AdminController
 
     public function uploadImage(): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
     {
-        try{
-            [$basePath,$fileName] = $this->upload('image');
-        }catch (\Throwable $throwable){
+        try {
+            [$basePath, $fileName] = $this->upload('image');
+        } catch (\Throwable $throwable) {
             return $this->response()->fail(__('admin.upload_file_error') . ":{$throwable->getMessage()}");
         }
         return $this->response()->success(['value' => $basePath . $fileName]);
@@ -27,9 +27,9 @@ class UploadController extends AdminController
 
     public function uploadFile(): \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
     {
-        try{
-            [$basePath,$fileName] = $this->upload('file');
-        }catch (\Throwable $throwable){
+        try {
+            [$basePath, $fileName] = $this->upload('file');
+        } catch (\Throwable $throwable) {
             return $this->response()->fail(__('admin.upload_file_error') . ":{$throwable->getMessage()}");
         }
         return $this->response()->success(['value' => $basePath . $fileName]);
@@ -39,38 +39,40 @@ class UploadController extends AdminController
     {
         $fromWangEditor = false;
         $file = request()->file('file');
+        $key = 'file';
+        $type = 'file';
 
         if (!$file) {
             $fromWangEditor = true;
             $file = request()->file('wangeditor-uploaded-image');
+            $key = 'wangeditor-uploaded-image';
+            $type = 'image';
             if (!$file) {
                 $file = request()->file('wangeditor-uploaded-video');
+                $key = 'wangeditor-uploaded-video';
+                $type = 'video';
             }
         }
-
-        if (!$file) {
-            return $this->response()->additional(['errno' => 1])->fail(__('admin.upload_file_error'));
+        try {
+            [$basePath, $fileName] = $this->upload($type, $key);
+            if ($fromWangEditor) {
+                return $this->response()->additional(['errno' => 0])->success(['url' => $basePath . $fileName]);
+            } else {
+                return $this->response()->success(['value' => $basePath . $fileName]);
+            }
+        } catch (\Throwable $throwable) {
+            return $this->response()->fail(__('admin.upload_file_error') . ":{$throwable->getMessage()}");
         }
-
-        $path = $file->store(Admin::config('admin.upload.directory.rich'), Admin::config('admin.upload.disk'));
-
-        $link = Storage::disk(Admin::config('admin.upload.disk'))->url($path);
-
-        if ($fromWangEditor) {
-            return $this->response()->additional(['errno' => 0])->success(['url' => $link]);
-        }
-
-        return $this->response()->additional(compact('link'))->success(compact('link'));
     }
 
     /**
      * @param $type
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Resources\Json\JsonResource
      */
-    public function upload($type = 'file',$key='file'):array
+    public function upload($type = 'file', $key = 'file'): array
     {
         $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
-        [$basePath, $fileName] = self::doUpload($type, $disk,$key);
+        [$basePath, $fileName] = self::doUpload($type, $disk, $key);
         return [$basePath, $fileName];
     }
 
@@ -152,7 +154,7 @@ class UploadController extends AdminController
      * @return array
      * @throws \Exception
      */
-    public static function doUpload($type = 'file', $disk = 'local',$key='file')
+    public static function doUpload($type = 'file', $disk = 'local', $key = 'file')
     {
         $file = request()->file($key);
         if (!$file) {
