@@ -25,6 +25,14 @@ if (!function_exists('ManoRichTextControl')) {
     function ManoRichTextControl(string $name = '', string $label = '')
     {
         $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
-        return amis()->RichTextControl($name, $label)->receiver("/mano-code/upload/{$disk}/upload-image");
+        return amis()->RichTextControl($name, $label)->receiver("/mano-code/upload/{$disk}/upload-rich");
+    }
+}
+
+if (!function_exists('WangEditorControl')) {
+    function WangEditorControl(string $name = '', string $label = '')
+    {
+        $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        return amis()->WangEditor($name, $label)->uploadImageServer("/mano-code/upload/{$disk}/upload-rich")->uploadVideoServer("/mano-code/upload/{$disk}/upload-rich");
     }
 }
