@@ -76,3 +76,20 @@ Route::any('/api-upload-demo', function () {
     ]]);
 });
 ```
+
+
+#### 获取存储器用于删除、查询文件的操作
+
+```php
+
+// 写入文件
+getStorageFilesystem()->put('demo/test.txt','Hello World');
+// 删除文件
+getStorageFilesystem()->delete('demo/test.txt');
+// 获取配置目录下的文件
+getStorageFilesystem()->files();
+// 文件是否存在
+getStorageFilesystem()->exists('demo/test.txt');
+// 指定存储器的名称（默认获取当前开启的存储驱动）
+getStorageFilesystem('local')->exists('demo/test.txt');
+```
