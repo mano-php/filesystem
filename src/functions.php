@@ -37,3 +37,13 @@ if (!function_exists('ManoWangEditorControl')) {
         return amis()->WangEditor($name, $label)->uploadImageServer("/{$prefix}/mano-code/upload/{$disk}/upload-rich")->uploadVideoServer("/{$prefix}/mano-code/upload/{$disk}/upload-rich");
     }
 }
+
+if(!function_exists('getStorageFilesystem')){
+    function getStorageFilesystem(string $disk = null)
+    {
+        if(!(strlen(strval($disk))>=1)){
+            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        }
+        return \ManoCode\FileSystem\Http\Controllers\UploadController::getStorageFilesystem($disk);
+    }
+}
