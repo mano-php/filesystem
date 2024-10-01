@@ -199,6 +199,19 @@ class UploadController extends AdminController
     {
         return FilesystemConfig::query()->where('key', $disk)->first();
     }
+    /**
+     * 获取当前存储器
+     * @param $disk
+     * @return \Illuminate\Contracts\Filesystem\Filesystem
+     */
+    public static function getStorageFilesystem(string $disk = 'local')
+    {
+        $diskConfig = self::getDiskConfig($disk);
+        $diskConfigBody = self::processDiskConfig($diskConfig);
+        $basePath = self::getBasePath($diskConfigBody);
+
+        return  Storage::build($diskConfigBody);
+    }
 
     private static function processDiskConfig($diskConfig)
     {
