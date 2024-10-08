@@ -85,7 +85,7 @@ class FilesystemServiceProvider extends ManoCodeServiceProvider
             if (isset($data['filename'])){
                 $diskConfig = \ManoCode\FileSystem\Http\Controllers\UploadController::getDiskConfig('oss');
                 $ossConfig = collect(json_decode($diskConfig->getAttribute('config'), true));
-                $data['filename'] = 'https://' . $ossConfig->get('bucket') . '.' . $ossConfig->get('endpoint').'/'.$data['filename'];
+                $data['data']['value'] = 'https://' . $ossConfig->get('bucket') . '.' . $ossConfig->get('endpoint').'/'.$data['filename'];
             }
             return count($data)<=0?new ArrayObject():$data;
         });
