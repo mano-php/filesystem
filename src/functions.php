@@ -47,3 +47,68 @@ if(!function_exists('getStorageFilesystem')){
         return \ManoCode\FileSystem\Http\Controllers\UploadController::getStorageFilesystem($disk);
     }
 }
+
+/**
+ * 获取OSS直传组件
+ */
+if (!function_exists('ManoOssFileControl')) {
+    function ManoOssFileControl(string $name = '', string $label = '', int $expAfter = 300, int $maxFileSize = 1048576000)
+    {
+        $diskConfig = \ManoCode\FileSystem\Http\Controllers\UploadController::getDiskConfig('oss');
+
+        $ossConfig = collect(json_decode($diskConfig->getAttribute('config'), true));
+        $config = array(
+            'dir' => $ossConfig->get('root'), // 上传目录
+            'bucket' => $ossConfig->get('bucket'),// Bucket 名称
+            'accessKeyId' => $ossConfig->get('access_key'),// 安全受限的 Access key ID
+            'accessKeySecret' => $ossConfig->get('secret_key'),// Access key secret
+            'expAfter' => $expAfter, // 签名失效时间，秒
+            'maxSize' => $maxFileSize // 文件最大尺寸
+        );
+        $host = 'https://' . $ossConfig->get('bucket') . '.' . $ossConfig->get('endpoint');
+        $now = strtotime('now');
+        $expireTime = $now + $config['expAfter'];
+        $expiration = gmdate('Y-m-d\TH:i:s\Z', $expireTime);
+        $policy = array(
+            "expiration" => $expiration,
+            "conditions" => array(
+                array("content-length-range", 0, $config['maxSize']),
+                array("starts-with", "\$key", $config['dir'])
+            )
+        );
+        $policyString = base64_encode(json_encode($policy));
+        $signature = base64_encode(hash_hmac('sha1', $policyString, $config['accessKeySecret'], true));
+        $tokenData = array(
+            "signature" => $signature,
+            "policy" => $policyString,
+//            "host" => $host,
+            "accessid" => $config['accessKeyId'],
+            "expire" => $expireTime,
+            "dir" => $config['dir']
+        );
+        $callback_param = [
+            'callbackUrl' => str_replace('http://','https://',url('/api/oss-callback')),
+            'callbackBody' => 'filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}',
+            'callbackBodyType' => 'application/x-www-form-urlencoded',
+        ];
+        $callback_string = json_encode($callback_param);
+        $base64_callback_body = base64_encode($callback_string);
+        return amis()->FileControl($name, $label)->useChunk(false)->receiver([
+            'url' => $host,
+            'method' => 'post',
+            'requestAdaptor' => "console.log('api------', api.data.get('file'));\r\nconsole.log('api------', api);\r\napi.data.set('key', '{$ossConfig->get('root')}' + (new Date()).getTime() + '_' + api.data.get('file').name);\r\nreturn api;",
+            'adaptor' => '',
+            'messages' => [],
+            'dataType' => 'form-data',
+            'data' => [
+                'key' => '',
+                'policy' => $policyString,
+                'OSSAccessKeyId' => $config['accessKeyId'],
+                'success_action_status' => 200,
+                'x-oss-forbid-overwrite' => true,
+                'signature' => $signature,
+                'callback' => $base64_callback_body
+            ],
+        ]);
+    }
+}
