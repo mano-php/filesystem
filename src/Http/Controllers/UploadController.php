@@ -195,7 +195,7 @@ class UploadController extends AdminController
         return [$basePath, $fileName, $ext];
     }
 
-    private static function getDiskConfig($disk)
+    public static function getDiskConfig($disk)
     {
         return FilesystemConfig::query()->where('key', $disk)->first();
     }
