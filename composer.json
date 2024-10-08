@@ -3,7 +3,7 @@
     "alias": "文件系统",
     "description": "支持 本地 OSS COS 七牛云，文件上传、线上预览、程序调用、等功能。",
     "type": "library",
-    "version": "v1.3.4",
+    "version": "v1.3.5",
     "keywords": [ "extension"],
     "homepage": "https://github.com/mano-php/filesystem",
     "license": "MIT",
