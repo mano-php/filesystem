@@ -93,3 +93,11 @@ getStorageFilesystem()->exists('demo/test.txt');
 // 指定存储器的名称（默认获取当前开启的存储驱动）
 getStorageFilesystem('local')->exists('demo/test.txt');
 ```
+
+#### OSS直传文件组件
+
+```php
+
+ManoOssFileControl('avatar','头像')->required(),
+
+```
