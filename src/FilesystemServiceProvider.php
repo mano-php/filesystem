@@ -81,10 +81,12 @@ class FilesystemServiceProvider extends ManoCodeServiceProvider
         parent::boot();
         Route::any('/api/oss-callback', function () {
             $data = request()->all();
-            $diskConfig = \ManoCode\FileSystem\Http\Controllers\UploadController::getDiskConfig('oss');
-            $ossConfig = collect(json_decode($diskConfig->getAttribute('config'), true));
-            $data['filename'] = 'https://' . $ossConfig->get('bucket') . '.' . $ossConfig->get('endpoint').'/'.$data['filename'];
-            return $data;
+            if (isset($data['filename'])){
+                $diskConfig = \ManoCode\FileSystem\Http\Controllers\UploadController::getDiskConfig('oss');
+                $ossConfig = collect(json_decode($diskConfig->getAttribute('config'), true));
+                $data['filename'] = 'https://' . $ossConfig->get('bucket') . '.' . $ossConfig->get('endpoint').'/'.$data['filename'];
+            }
+            return count($data)<=0?new ArrayObject():$data;
         });
         require_once(__DIR__ . DIRECTORY_SEPARATOR . 'functions.php');
     }
