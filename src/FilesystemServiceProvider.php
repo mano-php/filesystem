@@ -7,6 +7,7 @@ use Illuminate\Filesystem\FilesystemAdapter;
 use League\Flysystem\Filesystem;
 use ManoCode\CustomExtend\Extend\ManoCodeServiceProvider;
 use ManoCode\FileSystem\Models\FilesystemConfig;
+use Illuminate\Support\Facades\Route;
 
 /**
  * 文件存储系统服务提供者
