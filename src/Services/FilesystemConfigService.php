@@ -17,6 +17,24 @@ use Slowlyo\OwlAdmin\Services\AdminService;
 class FilesystemConfigService extends AdminService
 {
     protected string $modelName = FilesystemConfig::class;
+    CONST DRIVER_LISTS = [
+        [
+            'label'=>'本地存储',
+            'value'=>'local'
+        ],
+        [
+            'label'=>'七牛云kodo',
+            'value'=>'kodo'
+        ],
+        [
+            'label'=>'腾讯云COS',
+            'value'=>'cos'
+        ],
+        [
+            'label'=>'阿里云OSS',
+            'value'=>'oss'
+        ]
+    ];
     /**
      * 快速编辑单条
      *
@@ -27,7 +45,9 @@ class FilesystemConfigService extends AdminService
     public function quickEditItem($data)
     {
         if($data['state']){
-            FilesystemConfig::query()->where('id','<>',$data)->update(['state'=>0]);
+            if($data['id']<=4){
+                FilesystemConfig::query()->where('id','<>',$data['id'])->where('id','<=',4)->update(['state'=>0]);
+            }
             $data['state'] = 1;
         }else{
             $data['state'] = 0;

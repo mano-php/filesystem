@@ -4,16 +4,20 @@ use Slowlyo\OwlAdmin\Admin;
 
 
 if (!function_exists('ManoImageControl')) {
-    function ManoImageControl(string $name = '', string $label = '')
+    function ManoImageControl(string $name = '', string $label = '',?string $disk = null)
     {
-        $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        if(strlen(strval($disk))<=0){
+            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        }
         return amis()->ImageControl($name, $label)->receiver("/mano-code/upload/{$disk}/upload-image");
     }
 }
 if (!function_exists('ManoFileControl')) {
-    function ManoFileControl(string $name = '', string $label = '')
+    function ManoFileControl(string $name = '', string $label = '',?string $disk = null)
     {
-        $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        if(strlen(strval($disk))<=0){
+            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        }
         return amis()->FileControl($name, $label)->receiver("/mano-code/upload/{$disk}/upload-file")->
         startChunkApi("/mano-code/upload/{$disk}/upload_chunk_start")->
         chunkApi("/mano-code/upload/{$disk}/upload_chunk")->
@@ -22,26 +26,30 @@ if (!function_exists('ManoFileControl')) {
 }
 
 if (!function_exists('ManoRichTextControl')) {
-    function ManoRichTextControl(string $name = '', string $label = '')
+    function ManoRichTextControl(string $name = '', string $label = '',?string $disk = null)
     {
-        $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        if(strlen(strval($disk))<=0){
+            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        }
         return amis()->RichTextControl($name, $label)->receiver("/mano-code/upload/{$disk}/upload-rich");
     }
 }
 
 if (!function_exists('ManoWangEditorControl')) {
-    function ManoWangEditorControl(string $name = '', string $label = '')
+    function ManoWangEditorControl(string $name = '', string $label = '',?string $disk = null)
     {
         $prefix = (string)Admin::config('admin.route.prefix');
-        $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        if(strlen(strval($disk))<=0){
+            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        }
         return amis()->WangEditor($name, $label)->uploadImageServer("/{$prefix}/mano-code/upload/{$disk}/upload-rich")->uploadVideoServer("/{$prefix}/mano-code/upload/{$disk}/upload-rich");
     }
 }
 
-if(!function_exists('getStorageFilesystem')){
-    function getStorageFilesystem(string $disk = null)
+if (!function_exists('getStorageFilesystem')) {
+    function getStorageFilesystem(?string $disk = null)
     {
-        if(!(strlen(strval($disk))>=1)){
+        if (strlen(strval($disk)) <= 0) {
             $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
         }
         return \ManoCode\FileSystem\Http\Controllers\UploadController::getStorageFilesystem($disk);
@@ -52,10 +60,14 @@ if(!function_exists('getStorageFilesystem')){
  * 获取OSS直传组件
  */
 if (!function_exists('ManoOssFileControl')) {
-    function ManoOssFileControl(string $name = '', string $label = '', int $expAfter = 300, int $maxFileSize = 1048576000)
+    function ManoOssFileControl(string $name = '', string $label = '', ?string $disk = null, int $expAfter = 300, int $maxFileSize = 1048576000, bool $https = true)
     {
-        $diskConfig = \ManoCode\FileSystem\Http\Controllers\UploadController::getDiskConfig('oss');
-
+        if (strlen(strval($disk)) <= 0) {
+            $disk = 'oss';
+        }
+        if (!($diskConfig = \ManoCode\FileSystem\Http\Controllers\UploadController::getDiskConfig($disk))) {
+            throw new \Exception("存储器:{$disk} 不存在");
+        }
         $ossConfig = collect(json_decode($diskConfig->getAttribute('config'), true));
         $config = array(
             'dir' => $ossConfig->get('root'), // 上传目录
@@ -86,8 +98,13 @@ if (!function_exists('ManoOssFileControl')) {
             "expire" => $expireTime,
             "dir" => $config['dir']
         );
+        if ($https) {
+            $callback_api = str_replace('http://', 'https://', url('/api/oss-callback'));
+        } else {
+            $callback_api = url('/api/oss-callback');
+        }
         $callback_param = [
-            'callbackUrl' => str_replace('http://','https://',url('/api/oss-callback')),
+            'callbackUrl' => $callback_api,
             'callbackBody' => 'filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}',
             'callbackBodyType' => 'application/x-www-form-urlencoded',
         ];

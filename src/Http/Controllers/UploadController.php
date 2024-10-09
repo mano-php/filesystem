@@ -71,7 +71,16 @@ class UploadController extends AdminController
      */
     public function upload($type = 'file', $key = 'file'): array
     {
-        $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        $disk = request()->route('disk');
+        if(strlen(strval($disk))<=0){
+            /**
+             * 读取系统默认启用的配置
+             */
+            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+            if(strlen(strval($disk))<=0){
+                throw new \Exception('系统未配置默认存储');
+            }
+        }
         [$basePath, $fileName] = self::doUpload($type, $disk, $key);
         return [$basePath, $fileName];
     }

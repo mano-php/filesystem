@@ -95,8 +95,8 @@ class FilesystemServiceProvider extends ManoCodeServiceProvider
     public function install()
     {
         $this->publishable();
-        if (!is_dir(base_path() . '/public/uploads/')) {
-            mkdir(base_path() . '/public/uploads/', 0777, true);
+        if (!is_dir(base_path('public/uploads/'))) {
+            mkdir(base_path('public/uploads/'), 0777, true);
         }
         parent::install();
         if (!FilesystemConfig::query()->where('key', 'local')->first()) {
@@ -107,7 +107,7 @@ class FilesystemServiceProvider extends ManoCodeServiceProvider
                 'driver' => 'local',
                 'config' => json_encode([
                     'driver' => 'local',
-                    'root' => 'uploads',
+                    'root' => 'public/uploads',
                     'throw' => false
                 ]),
                 'state' => 1,
