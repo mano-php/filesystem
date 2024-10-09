@@ -109,7 +109,7 @@ class FilesystemConfigController extends AdminController
             ]),
             // 本地
             amis()->Container()->hiddenOn('${driver!="local"}')->body([
-                amis()->TextControl('config.root', '基础路径')->remark('基于base_path() 函数的参数。 例如:public/uploads')->required(),
+                amis()->TextControl('config.root', '基础路径')->remark('基于base_path() 函数的参数。 例如:uploads')->required(),
                 amis()->SwitchControl('config.throw', '是否抛出异常')->trueValue(true)->falseValue(false)->value(false)->required(),
             ]),
         ]);
