@@ -104,8 +104,8 @@ class FilesystemConfigController extends AdminController
             amis()->TextControl('key', '引用标识')->disabledOn('${id<=4}')->remark('建议用字母命名并且 以 . 作为分隔')->maxLength(50)->required(),
             amis()->SelectControl('driver', '驱动')->disabledOn('${id<=4}')->options(FilesystemConfigService::DRIVER_LISTS)->value('local')->required(),
             amis()->HiddenControl('state', '开启')->disabledOn('${id>4}')->value(0)->required(),
-            amis()->TextControl('path_gen_template','路径生成规则')->required(),
-            amis()->TextControl('name_gen_template','文件名生成规则')->required(),
+            amis()->TextControl('path_gen_template','路径生成规则')->remark("{date} : 代表年月日,例如:2024-10-11 <br />  <br /> {datetime} : 代表年月日时分秒,例如:2024-10-11 17:19:21 <br />  <br /> {time} : 代表当前时间戳,例如:1728638496 <br />  <br /> {uuid} : 代表生成UUID,例如:a1a65110-1c10-400b-8357-e6774793a5a5 <br />  <br /> {type} : 代表生成文件分类,例如:image <br />  <br /> {ext} : 代表生成文件后缀名,例如:jpg <br /> <br />  {rand(32)} : 代表生成32位的随机字符,例如:fnooT7QqvsCSLk3Y8jCo1QBJ12W5CFcC")->required(),
+            amis()->TextControl('name_gen_template','文件名生成规则')->remark("{date} : 代表年月日,例如:2024-10-11 <br />  <br /> {datetime} : 代表年月日时分秒,例如:2024-10-11 17:19:21 <br />  <br /> {time} : 代表当前时间戳,例如:1728638496 <br />  <br /> {uuid} : 代表生成UUID,例如:a1a65110-1c10-400b-8357-e6774793a5a5 <br />  <br /> {type} : 代表生成文件分类,例如:image <br />  <br /> {ext} : 代表生成文件后缀名,例如:jpg <br /> <br />  {rand(32)} : 代表生成32位的随机字符,例如:fnooT7QqvsCSLk3Y8jCo1QBJ12W5CFcC")->required(),
             amis()->Divider()->title('详细配置')->titlePosition('center'),
             // 七牛云存储
             amis()->Container()->hiddenOn('${driver!="kodo"}')->body([
