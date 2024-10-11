@@ -108,15 +108,17 @@ ManoOssFileControl('avatar','头像')->required(),
 ```php
 
 // 可用变量
-//[
-//    '{date}' => date('Y-m-d'), // 年月日
-//    '{datetime}' => date('Y-m-d H:i:s'), // 年月日时分秒
-//    '{time}' => time(), // 时间戳
-//    '{uuid}' => Str::uuid(), // UUID
-//    '{type}' => $type, // 文件分类
-//    '{ext}' => $ext, // 文件后缀名
-//]
 
-ManoImageControl('avatar','头像','oss','jiechi/{type}','{time}.{ext}')->required(),
-ManoFileControl('avatar','头像','oss','jiechi/{type}','{time}.{ext}')->required(),
+//    {date}      =>   2024-10-11                              // 年月日
+//    {datetime}  =>   2024-10-11 17:19:21                     // 年月日时分秒
+//    {time}      =>   1728638496                              // 时间戳
+//    {uuid}      =>   a1a65110-1c10-400b-8357-e6774793a5a5    // UUID
+//    {type}      =>   image                                   // 文件分类
+//    {ext}       =>   jpg                                     // 文件后缀名
+//    {hash}      =>   698d51a19d8a121ce581499d7b701668        // 文件hash值
+//    {rand(32)}  =>   fnooT7QqvsCSLk3Y8jCo1QBJ12W5CFcC        // 随机字符串
+
+
+ManoImageControl('avatar','头像','oss','my-file/{type}','{time}.{ext}')->required(),
+ManoFileControl('avatar','头像','oss','my-file/{type}','{time}.{ext}')->required(),
 ```

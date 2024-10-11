@@ -197,7 +197,7 @@ class UploadController extends AdminController
 
         $filesystem = Storage::build($diskConfigBody);
 
-        $fileName = self::generateUniqueFileName($filesystem, $type, $ext, $disk);
+        $fileName = self::generateUniqueFileName($filesystem, $type, $ext, $disk, $originFile);
 
         $filesystem->put($fileName, file_get_contents($originFile));
 
@@ -281,7 +281,7 @@ class UploadController extends AdminController
      * @param $disk
      * @return string
      */
-    private static function generateUniqueFileName($filesystem, $type, $ext, $disk)
+    private static function generateUniqueFileName($filesystem, $type, $ext, $disk, $originFile)
     {
         /**
          * 目录生成规则
@@ -306,6 +306,8 @@ class UploadController extends AdminController
             '{uuid}' => Str::uuid(),
             '{type}' => $type,
             '{ext}' => $ext,
+            '{ext}' => $ext,
+            '{hash}' => md5(file_get_contents($originFile)),
         ];
 
         // 查找随机长度
