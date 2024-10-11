@@ -1,0 +1,395 @@
+{
+    "type": "page",
+    "regions": [
+        "body"
+    ],
+    "id": "u:13e89c4e7a80",
+    "title": "Hello world",
+    "body": [
+        {
+            "type": "grid",
+            "id": "u:1c37e0acad86",
+            "columns": []
+        },
+        {
+            "type": "flex",
+            "items": [
+                {
+                    "type": "container",
+                    "body": [
+                        {
+                            "type": "tpl",
+                            "tpl": "资源管理",
+                            "inline": true,
+                            "wrapperComponent": "h2",
+                            "id": "u:d26bd3ed4c09"
+                        }
+                    ],
+                    "size": "none",
+                    "style": {
+                        "position": "static",
+                        "display": "block",
+                        "flex": "1 1 auto",
+                        "flexGrow": 2,
+                        "flexBasis": 0
+                    },
+                    "wrapperBody": false,
+                    "isFixedHeight": false,
+                    "isFixedWidth": false,
+                    "id": "u:74e4648be87a"
+                },
+                {
+                    "type": "container",
+                    "body": [
+                        {
+                            "type": "button",
+                            "label": "返回上一级",
+                            "onEvent": {
+                                "click": {
+                                    "actions": [
+                                        {
+                                            "componentId": "u:13e89c4e7a80",
+                                            "ignoreError": false,
+                                            "actionType": "setValue",
+                                            "args": {
+                                                "value": {
+                                                    "defaultPath": "${prevPath}"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            "id": "u:ba345ab03284",
+                            "level": "link",
+                            "visibleOn": "${!!prevPath}"
+                        }
+                    ],
+                    "size": "none",
+                    "style": {
+                        "position": "static",
+                        "display": "flex",
+                        "flex": "1 1 auto",
+                        "flexGrow": 1,
+                        "flexBasis": "0px",
+                        "flexWrap": "nowrap",
+                        "justifyContent": "flex-end",
+                        "alignItems": "center"
+                    },
+                    "wrapperBody": false,
+                    "isFixedHeight": false,
+                    "isFixedWidth": false,
+                    "id": "u:4a6ba609e41f"
+                }
+            ],
+            "style": {
+                "position": "relative",
+                "rowGap": "10px",
+                "columnGap": "10px",
+                "flexWrap": "nowrap",
+                "inset": "auto"
+            },
+            "id": "u:71641dbd59d6",
+            "isFixedHeight": false,
+            "isFixedWidth": false,
+            "themeCss": {
+                "baseControlClassName": {
+                    "padding-and-margin:default": {
+                        "paddingLeft": "15px",
+                        "paddingRight": "15px"
+                    }
+                }
+            }
+        },
+        {
+            "type": "page",
+            "id": "u:13e89c4e7a80",
+            "title": "Hello world",
+            "body": [
+                {
+                    "type": "grid",
+                    "id": "u:1c37e0acad86",
+                    "columns": []
+                },
+                {
+                    "type": "flex",
+                    "items": [
+                        {
+                            "type": "container",
+                            "body": [
+                                {
+                                    "type": "input-text",
+                                    "label": "当前路径",
+                                    "value": "${path}",
+                                    "name": "text",
+                                    "id": "u:951d80400b53"
+                                }
+                            ],
+                            "size": "none",
+                            "style": {
+                                "position": "static",
+                                "display": "block",
+                                "flex": "1 1 auto",
+                                "flexGrow": 2,
+                                "flexBasis": 0
+                            },
+                            "wrapperBody": false,
+                            "isFixedHeight": false,
+                            "isFixedWidth": false,
+                            "id": "u:74e4648be87a"
+                        },
+                        {
+                            "type": "container",
+                            "body": [
+                                {
+                                    "type": "button",
+                                    "label": "返回上一级",
+                                    "onEvent": {
+                                        "click": {
+                                            "actions": [
+                                                {
+                                                    "componentId": "u:13e89c4e7a80",
+                                                    "ignoreError": false,
+                                                    "actionType": "setValue",
+                                                    "args": {
+                                                        "value": {
+                                                            "defaultPath": "${prevPath}"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "id": "u:ba345ab03284",
+                                    "level": "link",
+                                    "visibleOn": "${!!prevPath}"
+                                }
+                            ],
+                            "size": "none",
+                            "style": {
+                                "position": "static",
+                                "display": "flex",
+                                "flex": "1 1 auto",
+                                "flexGrow": 1,
+                                "flexBasis": "0px",
+                                "flexWrap": "nowrap",
+                                "justifyContent": "flex-end",
+                                "alignItems": "center"
+                            },
+                            "wrapperBody": false,
+                            "isFixedHeight": false,
+                            "isFixedWidth": false,
+                            "id": "u:4a6ba609e41f"
+                        }
+                    ],
+                    "style": {
+                        "position": "relative",
+                        "rowGap": "10px",
+                        "columnGap": "10px",
+                        "flexWrap": "nowrap",
+                        "inset": "auto"
+                    },
+                    "id": "u:71641dbd59d6",
+                    "isFixedHeight": false,
+                    "isFixedWidth": false,
+                    "themeCss": {
+                        "baseControlClassName": {
+                            "padding-and-margin:default": {
+                                "paddingLeft": "15px",
+                                "paddingRight": "15px"
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "crud",
+                    "id": "u:74b596ccedc2",
+                    "syncLocation": false,
+                    "columns": [
+                        {
+                            "type": "container",
+                            "body": [
+                                {
+                                    "type": "image",
+                                    "id": "u:57c6c72639ed",
+                                    "enlargeAble": true,
+                                    "hiddenOn": "${type !== 'jpg' && type !== 'png' && type !== 'jpeg' && type !== 'gif'}",
+                                    "height": 57,
+                                    "innerClassName": "no-border p-0",
+                                    "enlargeWithGallary": false,
+                                    "maxScale": 200,
+                                    "minScale": 50,
+                                    "style": {
+                                        "display": "inline-block"
+                                    },
+                                    "src": "${icon}"
+                                },
+                                {
+                                    "type": "image",
+                                    "id": "u:3f5977244cc5",
+                                    "enlargeAble": false,
+                                    "hiddenOn": "${type === 'jpg' || type === 'png' || type === 'jpeg' || type === 'gif'}",
+                                    "height": 57,
+                                    "innerClassName": "no-border p-0",
+                                    "enlargeWithGallary": false,
+                                    "maxScale": 200,
+                                    "minScale": 50,
+                                    "style": {
+                                        "display": "inline-block"
+                                    },
+                                    "src": "${icon}"
+                                }
+                            ],
+                            "style": {
+                                "display": "block",
+                                "height": "57px"
+                            },
+                            "wrapperBody": false,
+                            "id": "u:11be7a829967",
+                            "label": "图标",
+                            "isFixedHeight": false,
+                            "isFixedWidth": false,
+                            "placeholder": "-",
+                            "name": "icon",
+                            "themeCss": {
+                                "baseControlClassName": {
+                                    "padding-and-margin:default": {
+                                        "padding": 0
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "name": "name",
+                            "label": "名称",
+                            "type": "text",
+                            "id": "u:6b050a5c7c28"
+                        },
+                        {
+                            "name": "last_modified",
+                            "label": "最后修改时间",
+                            "type": "text",
+                            "id": "u:6b050a5c7c28"
+                        },
+                        {
+                            "type": "text",
+                            "label": "类型",
+                            "id": "u:6b050a5c7c29",
+                            "name": "type",
+                            "placeholder": "-",
+                            "toggled": true,
+                            "hiddenOn": "true"
+                        },
+                        {
+                            "type": "operation",
+                            "label": "操作",
+                            "id": "u:d69cd39c2c6b",
+                            "buttons": [
+                                {
+                                    "type": "button",
+                                    "label": "删除",
+                                    "actionType": "ajax",
+                                    "level": "link",
+                                    "className": "text-danger",
+                                    "confirmText": "确定要删除？",
+                                    "api": {
+                                        "method": "post",
+                                        "url": "/mano-code/resourc-manager/oss/delete?path=${path}"
+                                    },
+                                    "id": "u:89fcf725da4c"
+                                },
+                                {
+                                    "type": "button",
+                                    "label": "下一级",
+                                    "onEvent": {
+                                        "click": {
+                                            "actions": [
+                                                {
+                                                    "componentId": "u:13e89c4e7a80",
+                                                    "actionType": "setValue",
+                                                    "args": {
+                                                        "value": {
+                                                            "defaultPath": "${path}",
+                                                            "prevPath": "${(path.split('/').slice(0, -1).join('/'))}"
+                                                        }
+                                                    },
+                                                    "ignoreError": false
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "id": "u:2876b97afd2d",
+                                    "level": "link",
+                                    "hiddenOn": "${type !== 'directory'}"
+                                }
+                            ]
+                        }
+                    ],
+                    "bulkActions": [],
+                    "itemActions": [],
+                    "features": [
+                        "create",
+                        "delete",
+                        "view"
+                    ],
+                    "headerToolbar": [
+                        "bulkActions"
+                    ],
+                    "perPageAvailable": [
+                        5,
+                        10,
+                        20,
+                        50,
+                        100
+                    ],
+                    "messages": {},
+                    "api": {
+                        "url": "/mano-code/resourc-manager/oss/files?path=${defaultPath}",
+                        "method": "get",
+                        "messages": {},
+                        "requestAdaptor": "",
+                        "adaptor": "",
+                        "dataType": "json"
+                    }
+                }
+            ],
+            "asideResizor": false,
+            "pullRefresh": {
+                "disabled": true
+            },
+            "regions": [
+                "body"
+            ],
+            "style": {},
+            "themeCss": {
+                "baseControlClassName": {
+                    "boxShadow:default": " 0px 0px 0px 0px transparent"
+                }
+            },
+            "data": {
+                "defaultPath": ""
+            },
+            "perPageAvailable": [
+                5,
+                10,
+                20,
+                50,
+                100
+            ],
+            "messages": {}
+        }
+    ],
+    "asideResizor": false,
+    "pullRefresh": {
+        "disabled": true
+    },
+    "style": {},
+    "themeCss": {
+        "baseControlClassName": {
+            "boxShadow:default": " 0px 0px 0px 0px transparent"
+        }
+    },
+    "data": {
+        "defaultPath": ""
+    }
+}

@@ -101,3 +101,22 @@ getStorageFilesystem('local')->exists('demo/test.txt');
 ManoOssFileControl('avatar','头像')->required(),
 
 ```
+
+
+#### 自定义目录 文件 的名称生成规则 默认的设置在存储器
+
+```php
+
+// 可用变量
+//[
+//    '{date}' => date('Y-m-d'), // 年月日
+//    '{datetime}' => date('Y-m-d H:i:s'), // 年月日时分秒
+//    '{time}' => time(), // 时间戳
+//    '{uuid}' => Str::uuid(), // UUID
+//    '{type}' => $type, // 文件分类
+//    '{ext}' => $ext, // 文件后缀名
+//]
+
+ManoImageControl('avatar','头像','oss','jiechi/{type}','{time}.{ext}')->required(),
+ManoFileControl('avatar','头像','oss','jiechi/{type}','{time}.{ext}')->required(),
+```

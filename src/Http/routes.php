@@ -10,6 +10,22 @@ Route::resource('filesystem_config', \ManoCode\FileSystem\Http\Controllers\Files
 
 Route::get('filesystem', [Controllers\FilesystemController::class, 'index']);
 /**
+ * 文件列表
+ */
+Route::get('/mano-code/resourc-manager/{disk}/files',[Controllers\ResourcManagerController::class,'files']);
+/**
+ * 新增文件
+ */
+Route::post('/mano-code/resourc-manager/{disk}/put',[Controllers\ResourcManagerController::class,'put']);
+/**
+ * 删除文件
+ */
+Route::post('/mano-code/resourc-manager/{disk}/delete',[Controllers\ResourcManagerController::class,'delete']);
+/**
+ * 修改文件
+ */
+Route::post('/mano-code/resourc-manager/{disk}/save',[Controllers\ResourcManagerController::class,'save']);
+/**
  * 上传图片
  */
 Route::any('/mano-code/upload/{disk}/upload-image', [Controllers\UploadController::class, 'uploadImage']);

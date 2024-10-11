@@ -72,12 +72,12 @@ class UploadController extends AdminController
     public function upload($type = 'file', $key = 'file'): array
     {
         $disk = request()->route('disk');
-        if(strlen(strval($disk))<=0){
+        if (strlen(strval($disk)) <= 0) {
             /**
              * 读取系统默认启用的配置
              */
-            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
-            if(strlen(strval($disk))<=0){
+            $disk = $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->where('id', '<=', 4)->value('key');;
+            if (strlen(strval($disk)) <= 0) {
                 throw new \Exception('系统未配置默认存储');
             }
         }
@@ -197,7 +197,7 @@ class UploadController extends AdminController
 
         $filesystem = Storage::build($diskConfigBody);
 
-        $fileName = self::generateUniqueFileName($filesystem, $type, $ext);
+        $fileName = self::generateUniqueFileName($filesystem, $type, $ext, $disk);
 
         $filesystem->put($fileName, file_get_contents($originFile));
 
@@ -208,6 +208,7 @@ class UploadController extends AdminController
     {
         return FilesystemConfig::query()->where('key', $disk)->first();
     }
+
     /**
      * 获取当前存储器
      * @param $disk
@@ -219,7 +220,7 @@ class UploadController extends AdminController
         $diskConfigBody = self::processDiskConfig($diskConfig);
         $basePath = self::getBasePath($diskConfigBody);
 
-        return  Storage::build($diskConfigBody);
+        return Storage::build($diskConfigBody);
     }
 
     private static function processDiskConfig($diskConfig)
@@ -272,11 +273,61 @@ class UploadController extends AdminController
         }
     }
 
-    private static function generateUniqueFileName($filesystem, $type, $ext)
+    /**
+     * 生成文件目录+文件名
+     * @param $filesystem
+     * @param $type
+     * @param $ext
+     * @param $disk
+     * @return string
+     */
+    private static function generateUniqueFileName($filesystem, $type, $ext, $disk)
     {
-        do {
-            $fileName = Admin::config('admin.upload.directory.' . $type) . '/' . Str::random(50) . ".{$ext}";
-        } while ($filesystem->exists($fileName));
+        /**
+         * 目录生成规则
+         */
+        if (strlen(strval(request()->input('path_gen_template', ''))) >= 1) {
+            $path_gen_template = strval(request()->input('path_gen_template', ''));
+        } else {
+            $path_gen_template = FilesystemConfig::query()->where('key', $disk)->value('path_gen_template');
+        }
+        /**
+         * 文件名生成规则
+         */
+        if (strlen(strval(request()->input('name_gen_template', ''))) >= 1) {
+            $name_gen_template = strval(request()->input('name_gen_template', ''));
+        } else {
+            $name_gen_template = FilesystemConfig::query()->where('key', $disk)->value('name_gen_template');
+        }
+        $replacements = [
+            '{date}' => date('Y-m-d'),
+            '{datetime}' => date('Y-m-d H:i:s'),
+            '{time}' => time(),
+            '{uuid}' => Str::uuid(),
+            '{type}' => $type,
+            '{ext}' => $ext,
+        ];
+
+        // 查找随机长度
+        $random_length = preg_match('/{rand\((\d+)\)}/', $path_gen_template, $matches) ? $matches[1] : 32;
+
+        // 添加随机字符串替换到替换数组
+        $replacements['{rand(' . $random_length . ')}'] = Str::random($random_length);
+
+        // 执行替换
+        $path_gen_template = str_replace(array_keys($replacements), array_values($replacements), $path_gen_template);
+
+        // 查找随机长度
+        $random_length = preg_match('/\{rand\((\d+)\)}/', $name_gen_template, $matches) ? $matches[1] : 32;
+        // 添加随机字符串替换到替换数组
+        $replacements['{rand(' . $random_length . ')}'] = Str::random($random_length);
+
+        // 执行替换
+        $name_gen_template = str_replace(array_keys($replacements), array_values($replacements), $name_gen_template);
+        /**
+         * 拼接文件名
+         */
+        $fileName = rtrim($path_gen_template, '/') . '/' . ltrim($name_gen_template, '/');
 
         return $fileName;
     }

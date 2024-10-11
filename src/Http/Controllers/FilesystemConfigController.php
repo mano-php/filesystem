@@ -6,6 +6,7 @@ use Slowlyo\OwlAdmin\Renderers\Page;
 use Slowlyo\OwlAdmin\Renderers\Form;
 use Slowlyo\OwlAdmin\Controllers\AdminController;
 use ManoCode\FileSystem\Services\FilesystemConfigService;
+use Slowlyo\OwlAdmin\Support\Cores\AdminPipeline;
 
 /**
  * 文件系统
@@ -55,10 +56,43 @@ class FilesystemConfigController extends AdminController
         }
 
         return amis()->Operation()->label(__('admin.actions'))->buttons([
-//            $this->rowShowButton($dialog, $dialogSize),
+//            $this->rowResourceButton($dialog, 'full'),
             $this->rowEditButton($dialog, $dialogSize),
 //            $this->rowDeleteButton(),
         ]);
+    }
+
+    /**
+     * 资源管理
+     *
+     * @param bool|string $dialog     是否弹窗, 弹窗: true|dialog, 抽屉: drawer,
+     * @param string      $dialogSize 弹窗大小, 默认: md, 可选值: xs | sm | md | lg | xl | full
+     * @param string      $title      弹窗标题 & 按钮文字, 默认: 编辑
+     *
+     * @return \Slowlyo\OwlAdmin\Renderers\DialogAction|\Slowlyo\OwlAdmin\Renderers\LinkAction
+     */
+    protected function rowResourceButton(bool|string $dialog = false, string $dialogSize = 'xl', string $title = '')
+    {
+        $title  = "资源管理器";
+        $action = amis()->LinkAction()->link(admin_url('/mano-code/${key}/resourc-manager'));
+
+        if ($dialog) {
+            $form = json_decode(file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'resourc-manager.json'));
+
+            if ($dialog === 'drawer') {
+                $action = amis()->DrawerAction()->drawer(
+                    amis()->Drawer()->title($title)->body($form)->size($dialogSize)
+                );
+            } else {
+                $action = amis()->DialogAction()->dialog(
+                    amis()->Dialog()->title($title)->body($form)->size($dialogSize)
+                );
+            }
+        }
+
+        $action->label($title)->level('link');
+
+        return AdminPipeline::handle(AdminPipeline::PIPE_EDIT_ACTION, $action);
     }
 
     public function form($isEdit = false): Form
@@ -70,6 +104,8 @@ class FilesystemConfigController extends AdminController
             amis()->TextControl('key', '引用标识')->disabledOn('${id<=4}')->remark('建议用字母命名并且 以 . 作为分隔')->maxLength(50)->required(),
             amis()->SelectControl('driver', '驱动')->disabledOn('${id<=4}')->options(FilesystemConfigService::DRIVER_LISTS)->value('local')->required(),
             amis()->HiddenControl('state', '开启')->disabledOn('${id>4}')->value(0)->required(),
+            amis()->TextControl('path_gen_template','路径生成规则')->required(),
+            amis()->TextControl('name_gen_template','文件名生成规则')->required(),
             amis()->Divider()->title('详细配置')->titlePosition('center'),
             // 七牛云存储
             amis()->Container()->hiddenOn('${driver!="kodo"}')->body([

@@ -4,45 +4,45 @@ use Slowlyo\OwlAdmin\Admin;
 
 
 if (!function_exists('ManoImageControl')) {
-    function ManoImageControl(string $name = '', string $label = '',?string $disk = null)
+    function ManoImageControl(string $name = '', string $label = '', ?string $disk = null, ?string $path_gen_template = null, ?string $name_gen_template = null)
     {
-        if(strlen(strval($disk))<=0){
-            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        if (strlen(strval($disk)) <= 0) {
+            $disk = $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->where('id', '<=', 4)->value('key');;
         }
-        return amis()->ImageControl($name, $label)->receiver("/mano-code/upload/{$disk}/upload-image");
+        return amis()->ImageControl($name, $label)->receiver("/mano-code/upload/{$disk}/upload-image?path_gen_template={$path_gen_template}&name_gen_template={$name_gen_template}");
     }
 }
 if (!function_exists('ManoFileControl')) {
-    function ManoFileControl(string $name = '', string $label = '',?string $disk = null)
+    function ManoFileControl(string $name = '', string $label = '', ?string $disk = null, ?string $path_gen_template = null, ?string $name_gen_template = null)
     {
-        if(strlen(strval($disk))<=0){
-            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        if (strlen(strval($disk)) <= 0) {
+            $disk = $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->where('id', '<=', 4)->value('key');;
         }
-        return amis()->FileControl($name, $label)->receiver("/mano-code/upload/{$disk}/upload-file")->
+        return amis()->FileControl($name, $label)->receiver("/mano-code/upload/{$disk}/upload-file?path_gen_template={$path_gen_template}&name_gen_template={$name_gen_template}")->
         startChunkApi("/mano-code/upload/{$disk}/upload_chunk_start")->
         chunkApi("/mano-code/upload/{$disk}/upload_chunk")->
-        finishChunkApi("/mano-code/upload/{$disk}/upload_chunk_finish");
+        finishChunkApi("/mano-code/upload/{$disk}/upload_chunk_finish?path_gen_template={$path_gen_template}&name_gen_template={$name_gen_template}");
     }
 }
 
 if (!function_exists('ManoRichTextControl')) {
-    function ManoRichTextControl(string $name = '', string $label = '',?string $disk = null)
+    function ManoRichTextControl(string $name = '', string $label = '', ?string $disk = null, ?string $path_gen_template = null, ?string $name_gen_template = null)
     {
-        if(strlen(strval($disk))<=0){
-            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        if (strlen(strval($disk)) <= 0) {
+            $disk = $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->where('id', '<=', 4)->value('key');;
         }
-        return amis()->RichTextControl($name, $label)->receiver("/mano-code/upload/{$disk}/upload-rich");
+        return amis()->RichTextControl($name, $label)->receiver("/mano-code/upload/{$disk}/upload-rich?path_gen_template={$path_gen_template}&name_gen_template={$name_gen_template}");
     }
 }
 
 if (!function_exists('ManoWangEditorControl')) {
-    function ManoWangEditorControl(string $name = '', string $label = '',?string $disk = null)
+    function ManoWangEditorControl(string $name = '', string $label = '', ?string $disk = null, ?string $path_gen_template = null, ?string $name_gen_template = null)
     {
         $prefix = (string)Admin::config('admin.route.prefix');
-        if(strlen(strval($disk))<=0){
-            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+        if (strlen(strval($disk)) <= 0) {
+            $disk = $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->where('id', '<=', 4)->value('key');;
         }
-        return amis()->WangEditor($name, $label)->uploadImageServer("/{$prefix}/mano-code/upload/{$disk}/upload-rich")->uploadVideoServer("/{$prefix}/mano-code/upload/{$disk}/upload-rich");
+        return amis()->WangEditor($name, $label)->uploadImageServer("/{$prefix}/mano-code/upload/{$disk}/upload-rich?path_gen_template={$path_gen_template}&name_gen_template={$name_gen_template}")->uploadVideoServer("/{$prefix}/mano-code/upload/{$disk}/upload-rich?path_gen_template={$path_gen_template}&name_gen_template={$name_gen_template}");
     }
 }
 
@@ -50,7 +50,7 @@ if (!function_exists('getStorageFilesystem')) {
     function getStorageFilesystem(?string $disk = null)
     {
         if (strlen(strval($disk)) <= 0) {
-            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->value('key');
+            $disk = \ManoCode\FileSystem\Models\FilesystemConfig::query()->where('state', 1)->where('id', '<=', 4)->value('key');
         }
         return \ManoCode\FileSystem\Http\Controllers\UploadController::getStorageFilesystem($disk);
     }
