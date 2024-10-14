@@ -56,7 +56,7 @@ class FilesystemConfigController extends AdminController
         }
 
         return amis()->Operation()->label(__('admin.actions'))->buttons([
-//            $this->rowResourceButton($dialog, 'full'),
+            $this->rowResourceButton($dialog, 'full'),
             $this->rowEditButton($dialog, $dialogSize),
 //            $this->rowDeleteButton(),
         ]);

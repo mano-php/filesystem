@@ -36,50 +36,12 @@
                     "wrapperBody": false,
                     "isFixedHeight": false,
                     "isFixedWidth": false,
-                    "id": "u:74e4648be87a"
-                },
-                {
-                    "type": "container",
-                    "body": [
-                        {
-                            "type": "button",
-                            "label": "返回上一级",
-                            "onEvent": {
-                                "click": {
-                                    "actions": [
-                                        {
-                                            "componentId": "u:13e89c4e7a80",
-                                            "ignoreError": false,
-                                            "actionType": "setValue",
-                                            "args": {
-                                                "value": {
-                                                    "defaultPath": "${prevPath}"
-                                                }
-                                            }
-                                        }
-                                    ]
-                                }
-                            },
-                            "id": "u:ba345ab03284",
-                            "level": "link",
-                            "visibleOn": "${!!prevPath}"
+                    "id": "u:74e4648be87a",
+                    "themeCss": {
+                        "baseControlClassName": {
+                            "boxShadow:default": " 0px 0px 0px 0px transparent"
                         }
-                    ],
-                    "size": "none",
-                    "style": {
-                        "position": "static",
-                        "display": "flex",
-                        "flex": "1 1 auto",
-                        "flexGrow": 1,
-                        "flexBasis": "0px",
-                        "flexWrap": "nowrap",
-                        "justifyContent": "flex-end",
-                        "alignItems": "center"
-                    },
-                    "wrapperBody": false,
-                    "isFixedHeight": false,
-                    "isFixedWidth": false,
-                    "id": "u:4a6ba609e41f"
+                    }
                 }
             ],
             "style": {
@@ -120,9 +82,26 @@
                                 {
                                     "type": "input-text",
                                     "label": "当前路径",
-                                    "value": "${path}",
-                                    "name": "text",
-                                    "id": "u:951d80400b53"
+                                    "value": ".",
+                                    "name": "currentPath",
+                                    "id": "u:951d80400b53",
+                                    "onEvent": {
+                                        "blur": {
+                                            "weight": 0,
+                                            "actions": [
+                                                {
+                                                    "componentId": "u:13e89c4e7a80",
+                                                    "ignoreError": false,
+                                                    "actionType": "setValue",
+                                                    "args": {
+                                                        "value": {
+                                                            "defaultPath": "${event.data.value}"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
                                 }
                             ],
                             "size": "none",
@@ -140,31 +119,7 @@
                         },
                         {
                             "type": "container",
-                            "body": [
-                                {
-                                    "type": "button",
-                                    "label": "返回上一级",
-                                    "onEvent": {
-                                        "click": {
-                                            "actions": [
-                                                {
-                                                    "componentId": "u:13e89c4e7a80",
-                                                    "ignoreError": false,
-                                                    "actionType": "setValue",
-                                                    "args": {
-                                                        "value": {
-                                                            "defaultPath": "${prevPath}"
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    "id": "u:ba345ab03284",
-                                    "level": "link",
-                                    "visibleOn": "${!!prevPath}"
-                                }
-                            ],
+                            "body": [],
                             "size": "none",
                             "style": {
                                 "position": "static",
@@ -266,6 +221,12 @@
                             "id": "u:6b050a5c7c28"
                         },
                         {
+                            "name": "size",
+                            "label": "大小",
+                            "type": "text",
+                            "id": "u:6b050a5c7c28"
+                        },
+                        {
                             "name": "last_modified",
                             "label": "最后修改时间",
                             "type": "text",
@@ -294,12 +255,13 @@
                                     "confirmText": "确定要删除？",
                                     "api": {
                                         "method": "post",
-                                        "url": "/mano-code/resourc-manager/oss/delete?path=${path}"
+                                        "url": "/mano-code/resourc-manager/${key}/delete?path=${path}"
                                     },
                                     "id": "u:89fcf725da4c"
                                 },
                                 {
                                     "type": "button",
+                                    "id": "u:2876b97afd2d",
                                     "label": "下一级",
                                     "onEvent": {
                                         "click": {
@@ -309,18 +271,76 @@
                                                     "actionType": "setValue",
                                                     "args": {
                                                         "value": {
-                                                            "defaultPath": "${path}",
-                                                            "prevPath": "${(path.split('/').slice(0, -1).join('/'))}"
+                                                            "defaultPath": "${path}"
                                                         }
                                                     },
                                                     "ignoreError": false
+                                                },
+                                                {
+                                                    "componentId": "u:951d80400b53",
+                                                    "ignoreError": false,
+                                                    "actionType": "setValue",
+                                                    "args": {
+                                                        "value": "${path}"
+                                                    }
                                                 }
                                             ]
                                         }
                                     },
-                                    "id": "u:2876b97afd2d",
                                     "level": "link",
                                     "hiddenOn": "${type !== 'directory'}"
+                                },
+                                {
+                                    "type": "button",
+                                    "label": "上一级",
+                                    "onEvent": {
+                                        "click": {
+                                            "actions": [
+                                                {
+                                                    "componentId": "u:13e89c4e7a80",
+                                                    "ignoreError": false,
+                                                    "actionType": "setValue",
+                                                    "args": {
+                                                        "value": {
+                                                            "defaultPath": "${prev_path}"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "componentId": "u:951d80400b53",
+                                                    "ignoreError": false,
+                                                    "actionType": "setValue",
+                                                    "args": {
+                                                        "value": "${prev_path}"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "id": "u:982f24581d34",
+                                    "level": "link",
+                                    "visibleOn": "${defaultPath !== '.' && defaultPath !== '/' && defaultPath !== ''}"
+                                },
+                                {
+                                    "type": "button",
+                                    "label": "复制链接",
+                                    "onEvent": {
+                                        "click": {
+                                            "actions": [
+                                                {
+                                                    "ignoreError": false,
+                                                    "actionType": "copy",
+                                                    "args": {
+                                                        "copyFormat": "text/plain",
+                                                        "content": "${url}"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "id": "u:142ed5f9d14b",
+                                    "visibleOn": "${type !== 'directory'}",
+                                    "level": "link"
                                 }
                             ]
                         }
@@ -344,7 +364,7 @@
                     ],
                     "messages": {},
                     "api": {
-                        "url": "/mano-code/resourc-manager/oss/files?path=${defaultPath}",
+                        "url": "/mano-code/resourc-manager/${key}/files?path=${defaultPath}",
                         "method": "get",
                         "messages": {},
                         "requestAdaptor": "",
@@ -367,7 +387,7 @@
                 }
             },
             "data": {
-                "defaultPath": ""
+                "defaultPath": "."
             },
             "perPageAvailable": [
                 5,
@@ -388,8 +408,5 @@
         "baseControlClassName": {
             "boxShadow:default": " 0px 0px 0px 0px transparent"
         }
-    },
-    "data": {
-        "defaultPath": ""
     }
 }

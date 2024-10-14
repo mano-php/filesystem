@@ -30,6 +30,7 @@ class ResourcManagerController extends AdminController
         foreach ($directories as $directory) {
             $item = [
                 'name' => basename($directory), // 目录名
+                'prev_path' => dirname(dirname($directory)), // 上层目录
                 'path' => $directory, // 目录路径
                 'type' => 'directory', // 类型标识
                 'size' => 0, // 目录大小可以设置为0
@@ -48,12 +49,17 @@ class ResourcManagerController extends AdminController
             $item = [
                 'name' => basename($file), // 文件名
                 'path' => $file, // 文件路径
+                'prev_path' => dirname(dirname($file)), // 上层目录
                 'type' => pathinfo($file, PATHINFO_EXTENSION),
-                'size' => $filesystem->size($file), // 文件大小
                 'url' => $filesystem->url($file), // 文件的公开URL
                 'last_modified' => date('Y-m-d H:i:s', $filesystem->lastModified($file)), // 最后修改时间
             ];
             $item['icon'] = $this->getFileIcon($item['type'], $item['url']);
+            try{
+                $item['size'] = $this->formatSize($filesystem->size($file));
+            }catch (\Throwable $throwable){
+                $item['size'] = '0';
+            }
             // 获取文件信息
             $fileInfoList[] = $item;
         }
@@ -61,6 +67,17 @@ class ResourcManagerController extends AdminController
             'items' => $fileInfoList,
             'prevPath' => $path === null ? '' : dirname(dirname($path)),
         ]);
+    }
+    protected function formatSize($size) {
+        if ($size < 1024) {
+            return $size . ' B'; // 字节
+        } elseif ($size < 1024 ** 2) {
+            return round($size / 1024, 2) . ' KB'; // 千字节
+        } elseif ($size < 1024 ** 3) {
+            return round($size / (1024 ** 2), 2) . ' MB'; // 兆字节
+        } else {
+            return round($size / (1024 ** 3), 2) . ' GB'; // 吉字节
+        }
     }
 
     /**
