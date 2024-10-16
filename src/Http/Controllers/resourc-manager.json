@@ -169,30 +169,41 @@
                                     "id": "u:57c6c72639ed",
                                     "enlargeAble": true,
                                     "hiddenOn": "${type !== 'jpg' && type !== 'png' && type !== 'jpeg' && type !== 'gif'}",
-                                    "height": 57,
-                                    "innerClassName": "no-border p-0",
+                                    "height": 24,
+                                    "innerClassName": "no-border p-0 mr-2",
                                     "enlargeWithGallary": false,
                                     "maxScale": 200,
                                     "minScale": 50,
                                     "style": {
-                                        "display": "inline-block"
+                                        "display": "inline-block",
+                                        "vertical-align": "middle"
                                     },
-                                    "src": "${icon}"
+                                    "src": "${icon}",
+                                    "width": 24
                                 },
                                 {
                                     "type": "image",
                                     "id": "u:3f5977244cc5",
                                     "enlargeAble": false,
                                     "hiddenOn": "${type === 'jpg' || type === 'png' || type === 'jpeg' || type === 'gif'}",
-                                    "height": 57,
-                                    "innerClassName": "no-border p-0",
+                                    "height": 24,
+                                    "innerClassName": "no-border p-0 mr-2",
                                     "enlargeWithGallary": false,
                                     "maxScale": 200,
                                     "minScale": 50,
                                     "style": {
-                                        "display": "inline-block"
+                                        "display": "inline-block",
+                                        "vertical-align": "middle"
                                     },
-                                    "src": "${icon}"
+                                    "src": "${icon}",
+                                    "width": 24
+                                },
+                                {
+                                    "type": "tpl",
+                                    "tpl": "${name}",
+                                    "inline": true,
+                                    "wrapperComponent": "",
+                                    "id": "u:a83099a416b1"
                                 }
                             ],
                             "style": {
@@ -201,7 +212,7 @@
                             },
                             "wrapperBody": false,
                             "id": "u:11be7a829967",
-                            "label": "图标",
+                            "label": "名称",
                             "isFixedHeight": false,
                             "isFixedWidth": false,
                             "placeholder": "-",
@@ -213,12 +224,6 @@
                                     }
                                 }
                             }
-                        },
-                        {
-                            "name": "name",
-                            "label": "名称",
-                            "type": "text",
-                            "id": "u:6b050a5c7c28"
                         },
                         {
                             "name": "size",

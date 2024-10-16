@@ -33,7 +33,7 @@ class ResourcManagerController extends AdminController
                 'prev_path' => dirname(dirname($directory)), // 上层目录
                 'path' => $directory, // 目录路径
                 'type' => 'directory', // 类型标识
-                'size' => 0, // 目录大小可以设置为0
+                'size' => '', // 目录大小可以设置为0
                 'url' => '', // 目录的URL可以不设置
                 'last_modified' => '目录', // 最后修改时间
             ];
