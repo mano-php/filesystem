@@ -49,3 +49,7 @@ Route::any('/mano-code/upload/{disk}/upload_chunk', [Controllers\UploadControlle
  * 上传完成
  */
 Route::any('/mano-code/upload/{disk}/upload_chunk_finish', [Controllers\UploadController::class, 'chunkUploadFinish']);
+/**
+ * 获取OSS token
+ */
+Route::any('/mano-code/upload/get_oss_token', [Controllers\UploadController::class, 'getOssToken']);

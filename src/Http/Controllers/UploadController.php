@@ -3,6 +3,7 @@
 namespace ManoCode\FileSystem\Http\Controllers;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Slowlyo\OwlAdmin\Admin;
@@ -281,7 +282,7 @@ class UploadController extends AdminController
      * @param $disk
      * @return string
      */
-    private static function generateUniqueFileName($filesystem, $type, $ext, $disk, $originFile)
+    private static function generateUniqueFileName($filesystem, $type, $ext, $disk, $originFile = null)
     {
         /**
          * 目录生成规则
@@ -307,8 +308,10 @@ class UploadController extends AdminController
             '{type}' => $type,
             '{ext}' => $ext,
             '{ext}' => $ext,
-            '{hash}' => md5(file_get_contents($originFile)),
         ];
+        if (file_exists($originFile)) {
+            $replacements['{hash}'] = md5(file_get_contents($originFile));
+        }
 
         // 查找随机长度
         $random_length = preg_match('/{rand\((\d+)\)}/', $path_gen_template, $matches) ? $matches[1] : 32;
@@ -332,5 +335,79 @@ class UploadController extends AdminController
         $fileName = rtrim($path_gen_template, '/') . '/' . ltrim($name_gen_template, '/');
 
         return $fileName;
+    }
+
+    /**
+     * 获取OSS Token
+     * @return array
+     * @throws \Exception
+     */
+    public function getOssToken()
+    {
+        try {
+            $requestConfig = json_decode(Crypt::decryptString(request()->input('make_config_data')), true);
+        } catch (\Throwable $throwable) {
+            return [];
+        }
+        $disk = $requestConfig['disk'];
+        $expAfter = $requestConfig['expAfter'];
+        $maxFileSize = $requestConfig['maxFileSize'];
+        $https = $requestConfig['https'];
+        if (!($diskConfig = \ManoCode\FileSystem\Http\Controllers\UploadController::getDiskConfig($disk))) {
+            throw new \Exception("存储器:{$disk} 不存在");
+        }
+        $ossConfig = collect(json_decode($diskConfig->getAttribute('config'), true));
+        $config = array(
+            'dir' => $ossConfig->get('root'), // 上传目录
+            'bucket' => $ossConfig->get('bucket'),// Bucket 名称
+            'accessKeyId' => $ossConfig->get('access_key'),// 安全受限的 Access key ID
+            'accessKeySecret' => $ossConfig->get('secret_key'),// Access key secret
+            'expAfter' => $expAfter, // 签名失效时间，秒
+            'maxSize' => $maxFileSize // 文件最大尺寸
+        );
+        $host = 'https://' . $ossConfig->get('bucket') . '.' . $ossConfig->get('endpoint');
+        $now = strtotime('now');
+        $expireTime = $now + $config['expAfter'];
+        $expiration = gmdate('Y-m-d\TH:i:s\Z', $expireTime);
+        $policy = array(
+            "expiration" => $expiration,
+            "conditions" => array(
+                array("content-length-range", 0, $config['maxSize']),
+                array("starts-with", "\$key", $config['dir'])
+            )
+        );
+        $policyString = base64_encode(json_encode($policy));
+        $signature = base64_encode(hash_hmac('sha1', $policyString, $config['accessKeySecret'], true));
+        $tokenData = array(
+            "signature" => $signature,
+            "policy" => $policyString,
+//            "host" => $host,
+            "accessid" => $config['accessKeyId'],
+            "expire" => $expireTime,
+            "dir" => $config['dir']
+        );
+
+        if ($https) {
+            $callback_api = str_replace('http://', 'https://', url('/api/oss-callback'));
+        } else {
+            $callback_api = url('/api/oss-callback');
+        }
+        $callback_param = [
+            'callbackUrl' => $callback_api,
+            'callbackBody' => 'filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}',
+            'callbackBodyType' => 'application/x-www-form-urlencoded',
+        ];
+        $callback_string = json_encode($callback_param);
+        $base64_callback_body = base64_encode($callback_string);
+        $fileName = request('filename', '');
+        return [
+            'key' => rtrim($ossConfig->get('root'), '/') . '/' . self::generateUniqueFileName(null, 'file', pathinfo($fileName, PATHINFO_EXTENSION), $disk),
+            'policy' => $policyString,
+            'OSSAccessKeyId' => $config['accessKeyId'],
+            'success_action_status' => 200,
+            'x-oss-forbid-overwrite' => true,
+            'signature' => $signature,
+            'callback' => $base64_callback_body
+        ];
     }
 }

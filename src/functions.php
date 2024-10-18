@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Crypt;
 use Slowlyo\OwlAdmin\Admin;
 
 
@@ -110,21 +111,78 @@ if (!function_exists('ManoOssFileControl')) {
         ];
         $callback_string = json_encode($callback_param);
         $base64_callback_body = base64_encode($callback_string);
+        /**
+         * 获取配置
+         */
+        $makeConfig = Crypt::encryptString(json_encode([
+            "disk" => $disk,
+            "expAfter" => $expAfter,
+            "maxFileSize" => $maxFileSize,
+            "https" => $https
+        ]));
+        $prefix = (string)Admin::config('admin.route.prefix');
         return amis()->FileControl($name, $label)->useChunk(false)->receiver([
             'url' => $host,
             'method' => 'post',
-            'requestAdaptor' => "console.log('api------', api.data.get('file'));\r\nconsole.log('api------', api);\r\napi.data.set('key', '{$ossConfig->get('root')}' + (new Date()).getTime() + '_' + api.data.get('file').name);\r\nreturn api;",
-            'adaptor' => '',
+            'requestAdaptor' => "
+                var make_config_data = api.data.get('make_config_data');
+                var filename = api.data.get('file').name;
+
+                // 使用 URLSearchParams 构建查询参数
+                var params = new URLSearchParams({
+                    make_config_data: make_config_data,
+                    filename: filename
+                });
+
+//                console.log('api',api);
+
+                // 构建完整的 API 地址
+                var signatureApi = `/{$prefix}/mano-code/upload/get_oss_token?\${params.toString()}`;
+
+//                console.log(signatureApi);
+
+                try{
+                    return fetch(signatureApi, {
+                      method: 'GET',
+                      headers: {
+                          'Authorization': 'Bearer ' + window.localStorage.getItem('admin-api-token')
+                      }
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                        console.log(data);
+                      // 更新 signature 和 callback
+                      api.data.set('signature', data.signature);
+                      api.data.set('callback', data.callback);
+                      api.data.set('OSSAccessKeyId', data.OSSAccessKeyId);
+                      api.data.set('policy', data.policy);
+                      // 设置上传文件的 key
+                      api.data.set('key', data.key);
+                      // 返回更新后的 api 对象
+                      return api;
+                  })
+                  .catch(error => {
+                      console.error('Error fetching signature:', error);
+                      throw new Error('Failed to fetch signature');
+                  });
+                }catch(err){
+                    console.log(err);
+                }
+            ",
             'messages' => [],
             'dataType' => 'form-data',
             'data' => [
+                /**
+                 * 用于获取配置的（防篡改）
+                 */
+                'make_config_data' => $makeConfig,
                 'key' => '',
-                'policy' => $policyString,
-                'OSSAccessKeyId' => $config['accessKeyId'],
+                'policy' => '',
+                'OSSAccessKeyId' => '',
                 'success_action_status' => 200,
                 'x-oss-forbid-overwrite' => true,
-                'signature' => $signature,
-                'callback' => $base64_callback_body
+                'signature' => '',
+                'callback' => ''
             ],
         ]);
     }
