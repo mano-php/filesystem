@@ -302,7 +302,7 @@ class UploadController extends AdminController
         }
         $replacements = [
             '{date}' => date('Y-m-d'),
-            '{datetime}' => date('Y-m-d H:i:s'),
+            '{datetime}' => date('Y-m-d-H-i-s'),
             '{time}' => time(),
             '{uuid}' => Str::uuid(),
             '{type}' => $type,
